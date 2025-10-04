@@ -1,0 +1,120 @@
+<div class="app-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <h1 class="title">{{ title() }}</h1>
+      <p class="subtitle">Check if today is the biggest day in American football</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Super Bowl Status Card -->
+      <div class="status-card" [class.is-super-bowl]="isSuperBowlSunday()">
+        <div class="status-icon">
+          @if (isSuperBowlSunday()) {
+            <div class="football-icon active">🏈</div>
+          } @else {
+            <div class="football-icon">🏈</div>
+          }
+        </div>
+        
+        <div class="status-content">
+          @if (isSuperBowlSunday()) {
+            <h2 class="status-title success">YES! It's Super Bowl Sunday!</h2>
+            <p class="status-message">Grab your snacks and get ready for the big game! 🎉</p>
+          } @else {
+            <h2 class="status-title">No, it's not Super Bowl Sunday</h2>
+            <p class="status-message">But the countdown is on for the next one!</p>
+          }
+        </div>
+      </div>
+
+      <!-- Countdown Timer -->
+      @if (!isSuperBowlSunday() && timeUntilNext()) {
+        <div class="countdown-card">
+          <h3 class="countdown-title">Time Until Next Super Bowl</h3>
+          <div class="countdown-grid">
+            <div class="countdown-item">
+              <div class="countdown-number">{{ timeUntilNext()!.days }}</div>
+              <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-item">
+              <div class="countdown-number">{{ timeUntilNext()!.hours }}</div>
+              <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-item">
+              <div class="countdown-number">{{ timeUntilNext()!.minutes }}</div>
+              <div class="countdown-label">Minutes</div>
+            </div>
+            <div class="countdown-item">
+              <div class="countdown-number">{{ timeUntilNext()!.seconds }}</div>
+              <div class="countdown-label">Seconds</div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Next Super Bowl Info -->
+      @if (nextSuperBowl()) {
+        <div class="info-card">
+          <h3 class="info-title">Next Super Bowl</h3>
+          <div class="info-content">
+            <div class="info-item">
+              <span class="info-label">Date:</span>
+              <span class="info-value">{{ nextSuperBowl()!.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              }) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Time:</span>
+              <span class="info-value">6:30 PM ET</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Network:</span>
+              <span class="info-value">CBS / Paramount+</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Fun Facts -->
+      <div class="facts-card">
+        <h3 class="facts-title">Super Bowl Fun Facts</h3>
+        <div class="facts-grid">
+          <div class="fact-item">
+            <div class="fact-number">58</div>
+            <div class="fact-text">Years of Super Bowl history</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-number">115M+</div>
+            <div class="fact-text">Average viewers worldwide</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-number">$7M</div>
+            <div class="fact-text">Cost of a 30-second commercial</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-number">1.4B</div>
+            <div class="fact-text">Chicken wings consumed</div>
+    </div>
+      </div>
+      </div>
+
+  </div>
+</main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; {{ currentYear }} Super Bowl Sunday Checker. Made with ❤️ for football fans.</p>
+    </div>
+  </footer>
+</div>
+
+<router-outlet />
