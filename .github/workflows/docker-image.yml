@@ -10,7 +10,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    environment: Dev
+    environment: Production
 
     steps:
       - uses: actions/checkout@v4
