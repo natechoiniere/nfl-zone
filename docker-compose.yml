@@ -1,5 +1,5 @@
 services:
-  # Angular application with built-in nginx
+  # Configure the deployment in .env rather than here
   superbowl-sunday:
     image: choiniere/superbowl_sunday:latest
     container_name: ${CONTAINER_NAME}
