@@ -3,11 +3,73 @@
 # Wait for nginx to start
 sleep 10
 
-# Request SSL certificates
-certbot certonly --webroot --webroot-path=/var/www/certbot --email ${SSL_EMAIL} --agree-tos --no-eff-email -d ${BASE_DOMAIN} -d www.${BASE_DOMAIN}
+# Check if certificates already exist
+CERT_PATH="/etc/letsencrypt/live/${BASE_DOMAIN}"
+CERT_FILE="${CERT_PATH}/fullchain.pem"
+KEY_FILE="${CERT_PATH}/privkey.pem"
 
-if [ $? -eq 0 ]; then
-    echo 'SSL certificates obtained successfully'
+echo "Checking for existing SSL certificates..."
+
+# Check if certificate files exist and are valid
+if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ]; then
+    echo "Existing certificates found at $CERT_PATH"
+    
+    # Check if certificate is valid and not expired (more than 30 days remaining)
+    if certbot certificates --cert-name ${BASE_DOMAIN} 2>/dev/null | grep -q "VALID"; then
+        echo "Valid certificates found, checking expiration..."
+        
+        # Get certificate expiration date
+        EXPIRY_DATE=$(certbot certificates --cert-name ${BASE_DOMAIN} 2>/dev/null | grep "Expiry Date" | awk '{print $3, $4, $5}')
+        if [ -n "$EXPIRY_DATE" ]; then
+            echo "Certificate expires on: $EXPIRY_DATE"
+            
+            # Check if certificate expires within 30 days
+            EXPIRY_TIMESTAMP=$(date -d "$EXPIRY_DATE" +%s 2>/dev/null)
+            CURRENT_TIMESTAMP=$(date +%s)
+            DAYS_UNTIL_EXPIRY=$(( (EXPIRY_TIMESTAMP - CURRENT_TIMESTAMP) / 86400 ))
+            
+            if [ $DAYS_UNTIL_EXPIRY -gt 30 ]; then
+                echo "Certificate is valid for $DAYS_UNTIL_EXPIRY more days, using existing certificates"
+                USE_EXISTING=true
+            else
+                echo "Certificate expires in $DAYS_UNTIL_EXPIRY days, attempting renewal..."
+                USE_EXISTING=false
+            fi
+        else
+            echo "Could not determine certificate expiration, attempting renewal..."
+            USE_EXISTING=false
+        fi
+    else
+        echo "Certificate validation failed, attempting renewal..."
+        USE_EXISTING=false
+    fi
+else
+    echo "No existing certificates found, requesting new ones..."
+    USE_EXISTING=false
+fi
+
+# Request or renew SSL certificates if needed
+if [ "$USE_EXISTING" = "false" ]; then
+    echo "Requesting/renewing SSL certificates..."
+    certbot certonly --webroot --webroot-path=/var/www/certbot --email ${SSL_EMAIL} --agree-tos --no-eff-email -d ${BASE_DOMAIN} -d www.${BASE_DOMAIN}
+    
+    if [ $? -eq 0 ]; then
+        echo "SSL certificates obtained/renewed successfully"
+    else
+        echo "SSL certificate request/renewal failed"
+        # If we have existing certificates, use them even if renewal failed
+        if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ]; then
+            echo "Using existing certificates despite renewal failure"
+        else
+            echo "No certificates available, continuing without HTTPS..."
+            exit 0
+        fi
+    fi
+fi
+
+# Proceed with HTTPS configuration if certificates are available
+if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ]; then
+    echo 'Configuring HTTPS with available certificates...'
     
     # Install docker-cli
     apk add --no-cache docker-cli
@@ -57,5 +119,5 @@ EOF
     
     echo 'HTTPS enabled successfully!'
 else
-    echo 'SSL certificate request failed, continuing...'
+    echo 'No SSL certificates available, continuing without HTTPS...'
 fi

@@ -41,6 +41,11 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
 RUN mkdir -p /var/run/nginx && \
     chown -R nginx:nginx /var/run/nginx
 
+# Add signal handling script for graceful shutdown
+RUN echo '#!/bin/sh' > /usr/local/bin/nginx-stop.sh && \
+    echo 'nginx -s quit' >> /usr/local/bin/nginx-stop.sh && \
+    chmod +x /usr/local/bin/nginx-stop.sh
+
 # Expose port 80
 EXPOSE 80
 
