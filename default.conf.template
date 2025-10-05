@@ -34,6 +34,12 @@ server {
         try_files $uri =404;
     }
 
+    # Serve ads.txt file directly
+    location = /ads.txt {
+        add_header Content-Type text/plain;
+        try_files $uri =404;
+    }
+
     # Handle Angular routing
     location / {
         try_files $uri $uri/ /index.html;
@@ -110,6 +116,12 @@ server {
         try_files $uri =404;
     }
 
+    # Serve ads.txt file directly
+    location = /ads.txt {
+        add_header Content-Type text/plain;
+        try_files $uri =404;
+    }
+
     # Handle Angular routing
     location / {
         try_files $uri $uri/ /index.html;
@@ -164,6 +176,12 @@ server {
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Serve ads.txt file directly
+    location = /ads.txt {
+        add_header Content-Type text/plain;
         try_files $uri =404;
     }
 
