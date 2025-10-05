@@ -31,9 +31,10 @@ COPY default.conf.template /etc/nginx/templates/default.conf.template
 # Note: Angular 17+ builds to 'dist/superbowl-sunday/browser' by default
 COPY --from=build /app/dist/superbowl-sunday/browser /usr/share/nginx/html
 
-# Copy ads.txt and robots.txt files for Google AdSense and SEO
+# Copy ads.txt, robots.txt, and sitemap.xml files for Google AdSense and SEO
 COPY ads.txt /usr/share/nginx/html/ads.txt
 COPY robots.txt /usr/share/nginx/html/robots.txt
+COPY sitemap.xml /usr/share/nginx/html/sitemap.xml
 
 # Set proper permissions for nginx
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
