@@ -682,7 +682,7 @@ body::before {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 1rem 0.75rem !important;
+  padding: 0.875rem 0.75rem !important;
   border-radius: 1rem !important;
   -webkit-border-radius: 1rem !important;
   -moz-border-radius: 1rem !important;
@@ -698,6 +698,7 @@ body::before {
   -webkit-mask-image: none !important;
   mask-image: none !important;
   contain: none !important;
+  margin: 0 !important;
 }
 
 ::ng-deep .dock-item-wrapper:hover {
@@ -782,7 +783,8 @@ body::before {
   border-radius: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
-  display: block !important;
+  display: flex !important;
+  align-items: center !important;
   overflow: visible !important;
   contain: none !important;
 }
