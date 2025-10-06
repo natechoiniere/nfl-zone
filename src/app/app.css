@@ -657,17 +657,13 @@ body::before {
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   backdrop-filter: blur(20px);
-  display: flex;
-  align-items: center;
   min-height: 110px;
 }
 
 .nfl-dock {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 auto !important;
   padding: 0 1.5rem;
-  display: flex;
-  justify-content: center;
   width: 100%;
 }
 
@@ -754,22 +750,26 @@ body::before {
   padding: 0 !important;
   box-shadow: none !important;
   border: none !important;
-  width: 100%;
+  width: 100% !important;
 }
 
 .p-dock .p-dock-list {
-  gap: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
+  gap: 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  list-style: none !important;
 }
 
 .p-dock .p-dock-item {
   background: transparent !important;
   border-radius: 0 !important;
   margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .p-dock .p-dock-item:hover {
@@ -778,7 +778,12 @@ body::before {
 
 .p-dock .p-dock-item-link {
   padding: 0 !important;
-  display: block;
+  display: block !important;
+  background: transparent !important;
+}
+
+.p-dock .p-dock-item-link:hover {
+  background: transparent !important;
 }
 
 /* Footer */
