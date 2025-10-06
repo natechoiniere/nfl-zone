@@ -657,7 +657,7 @@ body::before {
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   backdrop-filter: blur(20px);
-  min-height: 96px;
+  min-height: 86px;
   overflow: visible !important;
   clip-path: none !important;
   display: flex;
