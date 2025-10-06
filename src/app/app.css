@@ -671,7 +671,7 @@ body::before {
   clip-path: none !important;
 }
 
-.dock-item-wrapper {
+::ng-deep .dock-item-wrapper {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -691,9 +691,10 @@ body::before {
   clip-path: none !important;
   -webkit-mask-image: none !important;
   mask-image: none !important;
+  contain: none !important;
 }
 
-.dock-item-wrapper:hover {
+::ng-deep .dock-item-wrapper:hover {
   background-color: #2962ff !important;
   background: #2962ff !important;
   transform: translateY(-4px) scale(1.03) !important;
@@ -703,9 +704,10 @@ body::before {
   -webkit-border-radius: 1rem !important;
   -moz-border-radius: 1rem !important;
   overflow: visible !important;
+  contain: none !important;
 }
 
-.dock-item-wrapper i {
+::ng-deep .dock-item-wrapper i {
   font-size: 2.25rem;
   color: var(--primary-color) !important;
   margin-bottom: 0.5rem;
@@ -713,15 +715,15 @@ body::before {
   filter: drop-shadow(0 2px 4px rgba(41, 98, 255, 0.2));
 }
 
-.dock-item-wrapper:hover i,
-.dock-item-wrapper:hover i::before,
-.dock-item-wrapper:hover i::after {
+::ng-deep .dock-item-wrapper:hover i,
+::ng-deep .dock-item-wrapper:hover i::before,
+::ng-deep .dock-item-wrapper:hover i::after {
   color: white !important;
   filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.4)) !important;
   transform: scale(1.1) rotate(3deg) !important;
 }
 
-.dock-label {
+::ng-deep .dock-label {
   font-size: 0.8rem;
   font-weight: 700;
   color: var(--gray-800) !important;
@@ -731,14 +733,14 @@ body::before {
   letter-spacing: 0.03em;
 }
 
-.dock-item-wrapper:hover .dock-label {
+::ng-deep .dock-item-wrapper:hover .dock-label {
   color: white !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
   transform: translateY(-2px) !important;
 }
 
 /* PrimeNG Dock Customization */
-.p-dock {
+::ng-deep .p-dock {
   background: transparent !important;
   border-radius: 0 !important;
   padding: 0 !important;
@@ -749,9 +751,10 @@ body::before {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
+  contain: none !important;
 }
 
-.p-dock .p-dock-list {
+::ng-deep .p-dock .p-dock-list {
   gap: 1rem !important;
   display: flex !important;
   align-items: center !important;
@@ -761,28 +764,31 @@ body::before {
   padding: 0 !important;
   list-style: none !important;
   overflow: visible !important;
+  contain: none !important;
 }
 
-.p-dock .p-dock-item {
+::ng-deep .p-dock .p-dock-item {
   background: transparent !important;
   border-radius: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
   display: block !important;
   overflow: visible !important;
+  contain: none !important;
 }
 
-.p-dock .p-dock-item:hover {
+::ng-deep .p-dock .p-dock-item:hover {
   background: transparent !important;
   overflow: visible !important;
 }
 
-.p-dock .p-dock-item-link {
+::ng-deep .p-dock .p-dock-item-link {
   padding: 0 !important;
   display: block !important;
   background: transparent !important;
   overflow: visible !important;
   border-radius: 0 !important;
+  contain: none !important;
 }
 
 /* Footer */
