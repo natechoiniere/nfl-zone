@@ -653,11 +653,11 @@ body::before {
   right: 0;
   background: linear-gradient(to top, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
   border-top: 3px solid var(--primary-color);
-  padding: 1.25rem 0;
+  padding: 0.5rem 0;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   backdrop-filter: blur(20px);
-  min-height: 120px;
+  min-height: 96px;
   overflow: visible !important;
   clip-path: none !important;
   display: flex;
@@ -704,7 +704,7 @@ body::before {
 ::ng-deep .dock-item-wrapper:hover {
   background-color: #2962ff !important;
   background: #2962ff !important;
-  transform: translateY(-3px) scale(1.03) !important;
+  transform: translateY(-2px) scale(1.02) !important;
   box-shadow: 0 12px 24px rgba(41, 98, 255, 0.3) !important;
   border-color: #2962ff !important;
   border-radius: 0.75rem !important;
