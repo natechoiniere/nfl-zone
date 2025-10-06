@@ -653,10 +653,13 @@ body::before {
   right: 0;
   background: linear-gradient(to top, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
   border-top: 3px solid var(--primary-color);
-  padding: 1rem 0;
+  padding: 1.5rem 0;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  min-height: 120px;
 }
 
 .nfl-dock {
@@ -665,6 +668,7 @@ body::before {
   padding: 0 1.5rem;
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .dock-item-wrapper {
@@ -725,6 +729,7 @@ body::before {
   padding: 0 !important;
   box-shadow: none !important;
   border: none !important;
+  width: 100%;
 }
 
 .p-dock .p-dock-list {
@@ -732,6 +737,8 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0;
+  padding: 0;
 }
 
 .p-dock .p-dock-item {
@@ -815,7 +822,8 @@ body::before {
   }
 
   .dock-container {
-    padding: 0.75rem 0;
+    padding: 1rem 0;
+    min-height: 100px;
   }
 
   .dock-item-wrapper {
@@ -854,7 +862,8 @@ body::before {
   }
 
   .dock-container {
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
+    min-height: 90px;
   }
 
   .nfl-dock {
