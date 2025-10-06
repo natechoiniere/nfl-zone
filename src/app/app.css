@@ -696,7 +696,7 @@ body::before {
 .dock-item-wrapper:hover {
   background-color: #2962ff !important;
   background: #2962ff !important;
-  transform: translateY(-8px) scale(1.05) !important;
+  transform: translateY(-4px) scale(1.03) !important;
   box-shadow: 0 12px 24px rgba(41, 98, 255, 0.3) !important;
   border-color: #2962ff !important;
   border-radius: 1rem !important;
@@ -718,7 +718,7 @@ body::before {
 .dock-item-wrapper:hover i::after {
   color: white !important;
   filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.4)) !important;
-  transform: scale(1.15) rotate(5deg) !important;
+  transform: scale(1.1) rotate(3deg) !important;
 }
 
 .dock-label {
