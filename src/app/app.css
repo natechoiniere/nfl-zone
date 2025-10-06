@@ -657,12 +657,13 @@ body::before {
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   backdrop-filter: blur(20px);
-  min-height: 81px;
+  min-height: 76px;
   overflow: visible !important;
   clip-path: none !important;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center !important; /* center inline-block dock */
 }
 
 .nfl-dock {
@@ -672,8 +673,8 @@ body::before {
   width: auto !important;
   overflow: visible !important;
   clip-path: none !important;
-  display: block !important; /* allow inline centering of inner list */
-  text-align: center !important; /* center inline-flex list */
+  display: inline-block !important; /* shrink to content width */
+  text-align: center !important;
 }
 
 ::ng-deep .dock-item-wrapper {
@@ -755,7 +756,7 @@ body::before {
   border: none !important;
   width: 100% !important;
   overflow: visible !important;
-  display: block !important; /* work with text-align center from .nfl-dock */
+  display: inline-block !important; /* shrink to content */
   contain: none !important;
   margin: 0 auto !important;
 }
@@ -766,7 +767,7 @@ body::before {
   align-items: center !important;
   justify-content: center !important;
   flex-direction: row !important;
-  margin-left: auto !important; /* fallback centering */
+  margin-left: auto !important;
   margin-right: auto !important;
   padding: 0 !important;
   list-style: none !important;
