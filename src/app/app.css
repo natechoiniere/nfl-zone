@@ -136,9 +136,13 @@ body::before {
 
 .subtitle {
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--gray-900);
   font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 1.5rem;
+  border-radius: var(--border-radius);
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes fadeInUp {

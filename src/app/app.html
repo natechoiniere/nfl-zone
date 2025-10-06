@@ -2,7 +2,7 @@
 <header class="header">
   <div class="container">
     <h1 class="title">🏈 Super Bowl Sunday 🏈</h1>
-    <p class="subtitle">The Ultimate Football Fan's Destination</p>
+    <p class="subtitle">Is today Super Bowl Sunday?</p>
   </div>
 </header>
 
@@ -12,18 +12,10 @@
     
     <!-- Super Bowl Status Card -->
     <div class="status-card" [class.is-super-bowl]="isSuperBowlSunday()">
-      <div class="status-icon">
-        @if (isSuperBowlSunday()) {
-          <div class="football-icon active">🏈</div>
-        } @else {
-          <div class="football-icon">🏈</div>
-        }
-      </div>
-      
       <div class="status-content">
         @if (isSuperBowlSunday()) {
           <h2 class="status-title success">YES! It's Super Bowl Sunday!</h2>
-          <p class="status-message">Grab your snacks and get ready for the big game! 🎉</p>
+          <p class="status-message">Grab your snacks and get ready for the big game!</p>
         } @else {
           <h2 class="status-title">No, it's not Super Bowl Sunday</h2>
           <p class="status-message">But the countdown is on for the next one!</p>
@@ -34,7 +26,7 @@
     <!-- Countdown Timer -->
     @if (!isSuperBowlSunday() && timeUntilNext()) {
       <div class="countdown-card">
-        <h3 class="countdown-title">⏰ Time Until Next Super Bowl ⏰</h3>
+        <h3 class="countdown-title">Time Until Next Super Bowl</h3>
         <div class="countdown-grid">
           <div class="countdown-item">
             <div class="countdown-number">{{ timeUntilNext()!.days }}</div>
@@ -59,10 +51,10 @@
     <!-- Next Super Bowl Info -->
     @if (nextSuperBowl()) {
       <div class="info-card">
-        <h3 class="info-title">📅 Next Super Bowl Details</h3>
+        <h3 class="info-title">Next Super Bowl Details</h3>
         <div class="info-content">
           <div class="info-item">
-            <span class="info-label">📆 Date:</span>
+            <span class="info-label">Date:</span>
             <span class="info-value">{{ nextSuperBowl()!.toLocaleDateString('en-US', { 
               weekday: 'long', 
               year: 'numeric', 
@@ -71,11 +63,11 @@
             }) }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">🕕 Time:</span>
+            <span class="info-label">Time:</span>
             <span class="info-value">6:30 PM ET</span>
           </div>
           <div class="info-item">
-            <span class="info-label">📺 Network:</span>
+            <span class="info-label">Network:</span>
             <span class="info-value">CBS / Paramount+</span>
           </div>
         </div>
