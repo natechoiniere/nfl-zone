@@ -699,12 +699,13 @@ body::before {
   mask-image: none !important;
   contain: none !important;
   margin: 0 !important;
+  transform: translateY(-3px) !important;
 }
 
 ::ng-deep .dock-item-wrapper:hover {
   background-color: #2962ff !important;
   background: #2962ff !important;
-  transform: translateY(-2px) scale(1.02) !important;
+  transform: translateY(-5px) scale(1.02) !important;
   box-shadow: 0 12px 24px rgba(41, 98, 255, 0.3) !important;
   border-color: #2962ff !important;
   border-radius: 0.75rem !important;
