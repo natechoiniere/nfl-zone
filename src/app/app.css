@@ -696,10 +696,10 @@ body::before {
   right: 0;
   bottom: 0;
   background: var(--primary-color);
-  border-radius: var(--border-radius-lg);
+  border-radius: inherit;
   transform: scale(0);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: -1;
+  z-index: 0;
 }
 
 .dock-item-wrapper:hover::before {
@@ -707,6 +707,7 @@ body::before {
 }
 
 .dock-item-wrapper:hover {
+  background: var(--primary-color);
   transform: translateY(-8px) scale(1.05);
   box-shadow: 0 12px 24px rgba(41, 98, 255, 0.3);
   border-color: var(--primary-color);
@@ -719,11 +720,11 @@ body::before {
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   filter: drop-shadow(0 2px 4px rgba(41, 98, 255, 0.2));
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .dock-item-wrapper:hover i {
-  color: var(--white);
+  color: var(--white) !important;
   filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.4));
   transform: scale(1.15) rotate(5deg);
 }
@@ -737,11 +738,11 @@ body::before {
   text-transform: uppercase;
   letter-spacing: 0.03em;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .dock-item-wrapper:hover .dock-label {
-  color: var(--white);
+  color: var(--white) !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }
