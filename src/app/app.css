@@ -673,7 +673,7 @@ body::before {
   align-items: center;
   justify-content: center;
   padding: 1rem 0.75rem;
-  border-radius: var(--border-radius-lg);
+  border-radius: 1rem;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
   min-width: 85px;
@@ -681,66 +681,46 @@ body::before {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: 2px solid var(--gray-200);
   position: relative;
-  overflow: hidden;
-}
-
-.dock-item-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--primary-color);
-  border-radius: inherit;
-  transform: scale(0);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 0;
-}
-
-.dock-item-wrapper:hover::before {
-  transform: scale(1);
 }
 
 .dock-item-wrapper:hover {
-  background: var(--primary-color);
+  background: var(--primary-color) !important;
   transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 12px 24px rgba(41, 98, 255, 0.3);
-  border-color: var(--primary-color);
+  box-shadow: 0 12px 24px rgba(41, 98, 255, 0.3) !important;
+  border-color: var(--primary-color) !important;
+  border-radius: 1rem !important;
 }
 
 .dock-item-wrapper i {
   font-size: 2.25rem;
-  color: var(--primary-color);
+  color: var(--primary-color) !important;
   margin-bottom: 0.5rem;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   filter: drop-shadow(0 2px 4px rgba(41, 98, 255, 0.2));
-  position: relative;
-  z-index: 2;
 }
 
-.dock-item-wrapper:hover i {
-  color: var(--white) !important;
-  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.4));
-  transform: scale(1.15) rotate(5deg);
+.dock-item-wrapper:hover i,
+.dock-item-wrapper:hover i::before,
+.dock-item-wrapper:hover i::after {
+  color: white !important;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.4)) !important;
+  transform: scale(1.15) rotate(5deg) !important;
 }
 
 .dock-label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--gray-800);
+  color: var(--gray-800) !important;
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  position: relative;
-  z-index: 2;
 }
 
 .dock-item-wrapper:hover .dock-label {
-  color: var(--white) !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(-2px) !important;
 }
 
 /* PrimeNG Dock Customization */
