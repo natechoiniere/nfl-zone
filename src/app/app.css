@@ -653,22 +653,28 @@ body::before {
   right: 0;
   background: linear-gradient(to top, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
   border-top: 3px solid var(--primary-color);
-  padding: 2rem 0 1.5rem 0;
+  padding: 0;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   backdrop-filter: blur(20px);
   min-height: 130px;
   overflow: visible !important;
   clip-path: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nfl-dock {
   max-width: 1200px;
-  margin: 0 auto !important;
+  margin: 0 !important;
   padding: 0 1.5rem;
   width: 100%;
   overflow: visible !important;
   clip-path: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 ::ng-deep .dock-item-wrapper {
@@ -752,6 +758,7 @@ body::before {
   justify-content: center !important;
   align-items: center !important;
   contain: none !important;
+  margin: 0 auto !important;
 }
 
 ::ng-deep .p-dock .p-dock-list {
@@ -760,11 +767,14 @@ body::before {
   align-items: center !important;
   justify-content: center !important;
   flex-direction: row !important;
-  margin: 0 auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
   padding: 0 !important;
   list-style: none !important;
   overflow: visible !important;
   contain: none !important;
+  width: auto !important;
+  max-width: 100% !important;
 }
 
 ::ng-deep .p-dock .p-dock-item {
