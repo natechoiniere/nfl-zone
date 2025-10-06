@@ -49,7 +49,7 @@ export class App implements OnInit, OnDestroy {
     {
       label: 'Tickets',
       icon: 'pi pi-ticket',
-      command: () => window.open('https://www.ticketmaster.com/nfl-tickets/x1', '_blank')
+      command: () => window.open('https://www.ticketmaster.com/superbowl', '_blank')
     },
     {
       label: 'Pro Bowl',
