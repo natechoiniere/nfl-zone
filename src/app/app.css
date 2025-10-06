@@ -776,6 +776,7 @@ body::before {
   contain: none !important;
   width: auto !important;
   max-width: 100% !important;
+  transform: translateY(-5px) !important;
 }
 
 ::ng-deep .p-dock .p-dock-item {
