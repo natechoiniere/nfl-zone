@@ -675,7 +675,7 @@ body::before {
   align-items: center;
   justify-content: center;
   padding: 1rem 0.75rem;
-  border-radius: 1rem;
+  border-radius: 1rem !important;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
   min-width: 85px;
@@ -683,7 +683,7 @@ body::before {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: 2px solid var(--gray-200);
   position: relative;
-  overflow: visible;
+  overflow: visible !important;
 }
 
 .dock-item-wrapper:hover {
@@ -692,6 +692,7 @@ body::before {
   box-shadow: 0 12px 24px rgba(41, 98, 255, 0.3) !important;
   border-color: var(--primary-color) !important;
   border-radius: 1rem !important;
+  overflow: visible !important;
 }
 
 .dock-item-wrapper i {
@@ -734,6 +735,7 @@ body::before {
   box-shadow: none !important;
   border: none !important;
   width: 100% !important;
+  overflow: visible !important;
 }
 
 .p-dock .p-dock-list {
@@ -754,20 +756,25 @@ body::before {
   padding: 0 !important;
   display: flex !important;
   align-items: center !important;
+  overflow: visible !important;
 }
 
 .p-dock .p-dock-item:hover {
   background: transparent !important;
+  overflow: visible !important;
 }
 
 .p-dock .p-dock-item-link {
   padding: 0 !important;
   display: block !important;
   background: transparent !important;
+  overflow: visible !important;
+  border-radius: 1rem !important;
 }
 
 .p-dock .p-dock-item-link:hover {
   background: transparent !important;
+  overflow: visible !important;
 }
 
 /* Footer */
