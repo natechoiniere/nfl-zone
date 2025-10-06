@@ -160,7 +160,7 @@ body::before {
 .main-content {
   flex: 1;
   padding: 3rem 0;
-  padding-bottom: 150px; /* Space for fixed dock */
+  padding-bottom: 160px; /* Space for fixed dock */
 }
 
 /* Card Base Styles */
@@ -653,12 +653,13 @@ body::before {
   right: 0;
   background: linear-gradient(to top, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
   border-top: 3px solid var(--primary-color);
-  padding: 1.5rem 0;
+  padding: 2rem 0 1.5rem 0;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   backdrop-filter: blur(20px);
-  min-height: 120px;
-  overflow: visible;
+  min-height: 130px;
+  overflow: visible !important;
+  clip-path: none !important;
 }
 
 .nfl-dock {
@@ -666,7 +667,8 @@ body::before {
   margin: 0 auto !important;
   padding: 0 1.5rem;
   width: 100%;
-  overflow: visible;
+  overflow: visible !important;
+  clip-path: none !important;
 }
 
 .dock-item-wrapper {
@@ -684,6 +686,7 @@ body::before {
   border: 2px solid var(--gray-200);
   position: relative;
   overflow: visible !important;
+  clip-path: none !important;
 }
 
 .dock-item-wrapper:hover {
