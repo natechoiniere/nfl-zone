@@ -1,10 +1,15 @@
 import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { CardModule } from 'primeng/card';
+import { DividerModule } from 'primeng/divider';
+import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { DockModule } from 'primeng/dock';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, CardModule, DividerModule, TagModule, ButtonModule, DockModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -13,6 +18,50 @@ export class App implements OnInit, OnDestroy {
   protected readonly currentYear = signal(new Date().getFullYear());
   
   private intervalId: number | null = null;
+  
+  // Dock items for NFL/Super Bowl fans
+  protected readonly dockItems = [
+    {
+      label: 'NFL',
+      icon: 'pi pi-globe',
+      command: () => window.open('https://www.nfl.com', '_blank')
+    },
+    {
+      label: 'ESPN',
+      icon: 'pi pi-chart-line',
+      command: () => window.open('https://www.espn.com/nfl/', '_blank')
+    },
+    {
+      label: 'NFL Network',
+      icon: 'pi pi-video',
+      command: () => window.open('https://www.nfl.com/network/', '_blank')
+    },
+    {
+      label: 'Super Bowl',
+      icon: 'pi pi-star',
+      command: () => window.open('https://www.nfl.com/super-bowl/', '_blank')
+    },
+    {
+      label: 'Fantasy',
+      icon: 'pi pi-users',
+      command: () => window.open('https://fantasy.nfl.com', '_blank')
+    },
+    {
+      label: 'Tickets',
+      icon: 'pi pi-ticket',
+      command: () => window.open('https://www.ticketmaster.com/nfl-tickets/x1', '_blank')
+    },
+    {
+      label: 'Pro Bowl',
+      icon: 'pi pi-shield',
+      command: () => window.open('https://www.nfl.com/pro-bowl/', '_blank')
+    },
+    {
+      label: 'NFL Shop',
+      icon: 'pi pi-shopping-cart',
+      command: () => window.open('https://www.nflshop.com', '_blank')
+    }
+  ];
   
   // Super Bowl dates (typically second Sunday in February)
   private superBowlDates = [

@@ -1,6 +1,9 @@
 /* Global Styles */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+/* PrimeIcons */
+@import 'primeicons/primeicons.css';
+
 * {
   margin: 0;
   padding: 0;
@@ -19,11 +22,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Smooth animations */
-* {
-  transition: all 0.2s ease;
-}
-
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -40,4 +38,31 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* PrimeNG Theme Customizations */
+:root {
+  --primary-color: #2962ff;
+  --primary-color-text: #ffffff;
+  --surface-ground: #f0f4f8;
+  --surface-card: #ffffff;
+  --text-color: #374151;
+  --text-color-secondary: #6b7280;
+  --border-radius: 0.75rem;
+}
+
+.p-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--border-radius);
+}
+
+.p-card .p-card-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.p-card .p-card-content {
+  padding: 1.5rem;
 }
