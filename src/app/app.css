@@ -1,11 +1,19 @@
-/* Modern CSS Variables */
+/* Modern Football-Themed CSS Variables */
 :root {
-  --primary-color: #1e40af;
-  --primary-light: #3b82f6;
-  --primary-dark: #1e3a8a;
+  --football-green: #0d3b2e;
+  --football-green-light: #1a5f47;
+  --football-brown: #8b4513;
+  --football-brown-light: #a0522d;
+  --football-field: #2d5016;
+  --enzone-blue: #003f87;
+  --enzone-gold: #ffb81c;
+  
+  --primary-color: #003f87;
+  --primary-light: #0066cc;
+  --primary-dark: #002855;
   --success-color: #059669;
   --success-light: #10b981;
-  --warning-color: #d97706;
+  --warning-color: #ffb81c;
   --danger-color: #dc2626;
   
   --gray-50: #f9fafb;
@@ -26,8 +34,9 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --shadow-neon: 0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3);
+  --shadow-neon: 0 0 20px rgba(0, 99, 204, 0.5), 0 0 40px rgba(0, 99, 204, 0.3);
   --shadow-success: 0 0 20px rgba(16, 185, 129, 0.5), 0 0 40px rgba(16, 185, 129, 0.3);
+  --shadow-football: 0 8px 32px rgba(139, 69, 19, 0.3), 0 0 20px rgba(255, 184, 28, 0.2);
   
   --border-radius: 0.75rem;
   --border-radius-lg: 1rem;
@@ -48,12 +57,19 @@ body {
   line-height: 1.6;
   color: var(--gray-800);
   background: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%),
-    linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
-  animation: backgroundShift 20s ease-in-out infinite;
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 10px,
+      transparent 10px,
+      transparent 20px
+    ),
+    radial-gradient(circle at 20% 80%, rgba(0, 63, 135, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 184, 28, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(45, 80, 22, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #0d3b2e 0%, #003f87 40%, #1a5f47 70%, #002855 100%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  animation: backgroundShift 25s ease-in-out infinite;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -409,10 +425,10 @@ body::before {
 .countdown-card {
   text-align: center;
   background: linear-gradient(135deg, 
-    rgba(59, 130, 246, 0.1), 
-    rgba(30, 64, 175, 0.1),
-    rgba(99, 102, 241, 0.1));
-  border: 1px solid rgba(59, 130, 246, 0.2);
+    rgba(0, 63, 135, 0.15), 
+    rgba(0, 40, 85, 0.15),
+    rgba(255, 184, 28, 0.08));
+  border: 2px solid rgba(255, 184, 28, 0.3);
 }
 
 .countdown-title {
@@ -443,16 +459,17 @@ body::before {
 
 .countdown-item {
   background: linear-gradient(135deg, 
-    rgba(59, 130, 246, 0.9), 
-    rgba(30, 64, 175, 0.9),
-    rgba(99, 102, 241, 0.9));
+    rgba(0, 63, 135, 0.95), 
+    rgba(0, 40, 85, 0.95),
+    rgba(13, 59, 46, 0.9));
   border-radius: var(--border-radius-lg);
   padding: 2rem 1.5rem;
   color: var(--white);
   box-shadow: 
-    0 8px 25px rgba(59, 130, 246, 0.3),
+    0 8px 25px rgba(0, 63, 135, 0.4),
+    0 0 15px rgba(255, 184, 28, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 184, 28, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -482,23 +499,25 @@ body::before {
 .countdown-item:hover {
   transform: translateY(-5px) scale(1.05);
   box-shadow: 
-    0 15px 35px rgba(59, 130, 246, 0.4),
-    0 0 20px rgba(59, 130, 246, 0.6),
+    0 15px 35px rgba(0, 63, 135, 0.5),
+    0 0 25px rgba(255, 184, 28, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 184, 28, 0.6);
 }
 
 @keyframes countdownPulse {
   0%, 100% { 
     transform: scale(1);
     box-shadow: 
-      0 8px 25px rgba(59, 130, 246, 0.3),
+      0 8px 25px rgba(0, 63, 135, 0.4),
+      0 0 15px rgba(255, 184, 28, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
   50% { 
     transform: scale(1.02);
     box-shadow: 
-      0 12px 30px rgba(59, 130, 246, 0.4),
-      0 0 15px rgba(59, 130, 246, 0.5),
+      0 12px 30px rgba(0, 63, 135, 0.5),
+      0 0 20px rgba(255, 184, 28, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 }
@@ -539,12 +558,178 @@ body::before {
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-.facts-card {
+/* Fact of the Day Card */
+.fact-of-day-card {
   background: linear-gradient(135deg, 
-    rgba(168, 85, 247, 0.05), 
-    rgba(139, 92, 246, 0.05),
-    rgba(124, 58, 237, 0.05));
-  border: 1px solid rgba(168, 85, 247, 0.2);
+    rgba(139, 69, 19, 0.15),
+    rgba(160, 82, 45, 0.15),
+    rgba(255, 184, 28, 0.1));
+  backdrop-filter: blur(20px);
+  border-radius: var(--border-radius-xl);
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 
+    0 8px 32px rgba(139, 69, 19, 0.2),
+    0 0 20px rgba(255, 184, 28, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 184, 28, 0.4);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.fact-of-day-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.fact-of-day-card:hover::before {
+  left: 100%;
+}
+
+.fact-of-day-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(139, 69, 19, 0.3),
+    0 0 30px rgba(255, 184, 28, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 184, 28, 0.6);
+}
+
+.fact-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, 
+    rgba(0, 63, 135, 0.9),
+    rgba(0, 40, 85, 0.9));
+  border-radius: var(--border-radius-lg);
+  box-shadow: 
+    0 4px 15px rgba(0, 63, 135, 0.4),
+    0 0 20px rgba(255, 184, 28, 0.2);
+  border: 2px solid rgba(255, 184, 28, 0.4);
+  animation: badgePulse 3s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 
+      0 4px 15px rgba(0, 63, 135, 0.4),
+      0 0 20px rgba(255, 184, 28, 0.2);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 
+      0 6px 20px rgba(0, 63, 135, 0.5),
+      0 0 30px rgba(255, 184, 28, 0.4);
+  }
+}
+
+.badge-icon {
+  font-size: 2rem;
+  animation: iconRotate 4s ease-in-out infinite;
+}
+
+@keyframes iconRotate {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+.badge-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fact-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--border-radius-lg);
+  border: 2px solid rgba(139, 69, 19, 0.2);
+  min-height: 150px;
+  position: relative;
+}
+
+.fact-decoration {
+  font-size: 3rem;
+  opacity: 0.3;
+  position: absolute;
+  animation: float 3s ease-in-out infinite;
+}
+
+.fact-decoration.left {
+  left: 1rem;
+  animation-delay: 0s;
+}
+
+.fact-decoration.right {
+  right: 1rem;
+  animation-delay: 1.5s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+.fact-text {
+  font-size: 1.3rem;
+  line-height: 1.8;
+  color: var(--gray-900);
+  font-weight: 600;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  z-index: 1;
+  position: relative;
+}
+
+.fact-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.fact-note {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  font-style: italic;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  animation: noteGlow 2s ease-in-out infinite;
+}
+
+@keyframes noteGlow {
+  0%, 100% {
+    opacity: 0.8;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(255, 184, 28, 0.6);
+  }
 }
 
 .info-title,
@@ -621,82 +806,6 @@ body::before {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Facts Card */
-.facts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
-}
-
-.fact-item {
-  text-align: center;
-  padding: 2rem 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: var(--border-radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.fact-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, 
-    rgba(59, 130, 246, 0.1), 
-    rgba(99, 102, 241, 0.1));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.fact-item:hover::before {
-  opacity: 1;
-}
-
-.fact-item:hover {
-  transform: translateY(-8px) scale(1.05);
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 
-    0 15px 30px rgba(0, 0, 0, 0.2),
-    0 0 20px rgba(59, 130, 246, 0.3);
-}
-
-.fact-number {
-  font-size: 3rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  animation: factNumberGlow 3s ease-in-out infinite;
-  position: relative;
-  z-index: 1;
-}
-
-@keyframes factNumberGlow {
-  0%, 100% { 
-    filter: brightness(1);
-  }
-  50% { 
-    filter: brightness(1.2);
-  }
-}
-
-.fact-text {
-  font-size: 0.95rem;
-  color: var(--gray-700);
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 1;
-}
 
 /* Footer */
 .footer {
@@ -738,7 +847,7 @@ body::before {
   .status-card,
   .countdown-card,
   .info-card,
-  .facts-card {
+  .fact-of-day-card {
     padding: 1.5rem;
     margin-bottom: 1.5rem;
   }
@@ -756,8 +865,16 @@ body::before {
     font-size: 2rem;
   }
   
-  .facts-grid {
-    grid-template-columns: 1fr;
+  .fact-text {
+    font-size: 1.1rem;
+  }
+  
+  .badge-text {
+    font-size: 1.2rem;
+  }
+  
+  .fact-decoration {
+    font-size: 2rem;
   }
   
   .info-item {
