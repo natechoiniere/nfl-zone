@@ -670,10 +670,10 @@ body::before {
   max-width: 1200px;
   margin: 0 auto !important;
   padding: 0 1.5rem;
-  width: 100% !important;
+  width: auto !important;
   overflow: visible !important;
   clip-path: none !important;
-  display: flex !important;
+  display: inline-block !important;
   justify-content: center !important;
   align-items: center !important;
   text-align: center !important;
@@ -756,9 +756,9 @@ body::before {
   padding: 0 !important;
   box-shadow: none !important;
   border: none !important;
-  width: 100% !important;
+  width: auto !important;
   overflow: visible !important;
-  display: flex !important;
+  display: inline-block !important;
   justify-content: center !important;
   align-items: center !important;
   text-align: center !important;
