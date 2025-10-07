@@ -670,7 +670,7 @@ body::before {
   max-width: 1200px;
   margin: 0 auto !important;
   padding: 0 1.5rem;
-  width: max-content !important;
+  width: 100% !important;
   overflow: visible !important;
   clip-path: none !important;
   display: block !important;
@@ -782,12 +782,16 @@ body::before {
   max-width: 100% !important;
   transform: translateY(0) !important;
 }
-/* Force center the PrimeNG Dock exactly within the page width */
+/* Force center the PrimeNG Dock exactly within the page width (viewport-based) */
 ::ng-deep .nfl-dock .p-component.p-dock.p-dock-bottom {
+  position: fixed !important;
   left: 50% !important;
+  bottom: 0 !important;
   transform: translateX(-50%) !important;
   right: auto !important;
+  width: max-content !important;
   margin: 0 !important;
+  pointer-events: auto !important;
 }
 
 /* Force center the PrimeNG Dock exactly within the page width */
