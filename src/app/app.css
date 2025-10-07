@@ -959,3 +959,10 @@ body::before {
     padding-bottom: 110px;
   }
 }
+
+/* Global override to match console tweak for exact centering */
+::ng-deep .p-dock-bottom {
+  left: auto !important;
+  bottom: 0 !important;
+  width: 100% !important;
+}
