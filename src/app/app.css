@@ -670,10 +670,10 @@ body::before {
   max-width: 1200px;
   margin: 0 auto !important;
   padding: 0 1.5rem;
-  width: auto !important;
+  width: max-content !important;
   overflow: visible !important;
   clip-path: none !important;
-  display: inline-block !important;
+  display: block !important;
   justify-content: center !important;
   align-items: center !important;
   text-align: center !important;
