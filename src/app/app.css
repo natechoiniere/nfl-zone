@@ -756,7 +756,10 @@ body::before {
   border: none !important;
   width: 100% !important;
   overflow: visible !important;
-  display: inline-block !important; /* shrink to content */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
   contain: none !important;
   margin: 0 auto !important;
 }
