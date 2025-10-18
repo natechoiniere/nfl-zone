@@ -127,6 +127,10 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
+    # DNS resolver for proxy
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
+    
     # RSS proxy endpoints
     location /api/rss/espn {
         proxy_pass https://www.espn.com/espn/rss/nfl/news?null;
@@ -136,8 +140,8 @@ server {
         proxy_set_header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 10s;
-        proxy_read_timeout 30s;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
     }
@@ -149,8 +153,8 @@ server {
         proxy_set_header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 10s;
-        proxy_read_timeout 30s;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
     }
@@ -162,8 +166,8 @@ server {
         proxy_set_header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 10s;
-        proxy_read_timeout 30s;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
     }
@@ -175,8 +179,8 @@ server {
         proxy_set_header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 10s;
-        proxy_read_timeout 30s;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
     }
@@ -249,6 +253,10 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
+    # DNS resolver for proxy
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
+    
     # RSS proxy endpoints (dev fallback)
     location /api/rss/espn {
         proxy_pass https://www.espn.com/espn/rss/nfl/news?null;
@@ -258,8 +266,8 @@ server {
         proxy_set_header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 10s;
-        proxy_read_timeout 30s;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
     }
     location /api/rss/coldwire {
         proxy_pass https://www.thecoldwire.com/sports/nfl/feed/;
@@ -269,8 +277,8 @@ server {
         proxy_set_header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 10s;
-        proxy_read_timeout 30s;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
     }
     location /api/rss/nyt {
         proxy_pass https://www.nytimes.com/svc/collections/v1/publish/http://www.nytimes.com/topic/organization/national-football-league/rss.xml;
@@ -280,8 +288,8 @@ server {
         proxy_set_header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 10s;
-        proxy_read_timeout 30s;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
     }
     location /api/rss/wapo {
         proxy_pass https://feeds.washingtonpost.com/rss/rss_football-insider;
@@ -291,8 +299,8 @@ server {
         proxy_set_header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_connect_timeout 10s;
-        proxy_read_timeout 30s;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
     }
 
     # Health check endpoint
