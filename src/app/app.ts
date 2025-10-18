@@ -1,11 +1,26 @@
 import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { DockModule } from 'primeng/dock';
+
+interface RssItem {
+  title: string;
+  description: string;
+  link: string;
+  pubDate: string;
+}
+
+interface RssFeed {
+  title: string;
+  items: RssItem[];
+  loading: boolean;
+  error?: string;
+}
 
 @Component({
   selector: 'app-root',
@@ -18,6 +33,10 @@ export class App implements OnInit, OnDestroy {
   protected readonly currentYear = signal(new Date().getFullYear());
   
   private intervalId: number | null = null;
+  
+  // RSS Feeds
+  protected readonly espnFeed = signal<RssFeed>({ title: 'ESPN NFL News', items: [], loading: true });
+  protected readonly coldwireFeed = signal<RssFeed>({ title: 'The Cold Wire NFL', items: [], loading: true });
   
   // Dock items for NFL/Super Bowl fans
   protected readonly dockItems = [
@@ -196,6 +215,8 @@ export class App implements OnInit, OnDestroy {
            date1.getDate() === date2.getDate();
   }
   
+  constructor(private http: HttpClient) {}
+  
   ngOnInit() {
     // Update time every second for countdown
     this.intervalId = window.setInterval(() => {
@@ -203,6 +224,68 @@ export class App implements OnInit, OnDestroy {
       this.currentDate.set(now);
       this.currentYear.set(now.getFullYear());
     }, 1000);
+    
+    // Load RSS feeds
+    this.loadRssFeed('https://www.espn.com/espn/rss/nfl/news?null', this.espnFeed);
+    this.loadRssFeed('https://www.thecoldwire.com/sports/nfl/feed/', this.coldwireFeed);
+  }
+  
+  private loadRssFeed(url: string, feedSignal: any) {
+    // Use a CORS proxy for RSS feeds
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    
+    this.http.get(proxyUrl, { responseType: 'text' }).subscribe({
+      next: (response: any) => {
+        try {
+          const data = JSON.parse(response);
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(data.contents, 'text/xml');
+          
+          const items: RssItem[] = [];
+          const itemNodes = xml.querySelectorAll('item');
+          
+          // Get up to 5 items
+          for (let i = 0; i < Math.min(itemNodes.length, 5); i++) {
+            const item = itemNodes[i];
+            const title = item.querySelector('title')?.textContent || '';
+            const description = item.querySelector('description')?.textContent || '';
+            const link = item.querySelector('link')?.textContent || '';
+            const pubDate = item.querySelector('pubDate')?.textContent || '';
+            
+            // Clean up description (remove HTML tags)
+            const cleanDescription = description.replace(/<[^>]*>/g, '').trim();
+            
+            items.push({
+              title,
+              description: cleanDescription.substring(0, 200) + (cleanDescription.length > 200 ? '...' : ''),
+              link,
+              pubDate
+            });
+          }
+          
+          feedSignal.update((current: RssFeed) => ({
+            ...current,
+            items,
+            loading: false
+          }));
+        } catch (error) {
+          console.error('Error parsing RSS feed:', error);
+          feedSignal.update((current: RssFeed) => ({
+            ...current,
+            loading: false,
+            error: 'Failed to parse feed'
+          }));
+        }
+      },
+      error: (error) => {
+        console.error('Error loading RSS feed:', error);
+        feedSignal.update((current: RssFeed) => ({
+          ...current,
+          loading: false,
+          error: 'Failed to load feed'
+        }));
+      }
+    });
   }
   
   ngOnDestroy() {
