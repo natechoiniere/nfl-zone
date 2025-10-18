@@ -83,6 +83,9 @@ server {
     }
 }
 
+# RSS cache configuration
+proxy_cache_path /var/cache/nginx/rss levels=1:2 keys_zone=rss_cache:10m max_size=100m inactive=60m use_temp_path=off;
+
 # HTTPS server for domain
 server {
     listen 443 ssl http2;
@@ -131,7 +134,7 @@ server {
     resolver 8.8.8.8 8.8.4.4 valid=300s;
     resolver_timeout 5s;
     
-    # RSS proxy endpoints
+    # RSS proxy endpoints with caching
     location /api/rss/espn {
         proxy_pass https://www.espn.com/espn/rss/nfl/news?null;
         proxy_ssl_verify off;
@@ -144,6 +147,15 @@ server {
         proxy_read_timeout 10s;
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
+        
+        # Cache settings
+        proxy_cache rss_cache;
+        proxy_cache_valid 200 5m;
+        proxy_cache_valid 404 502 503 504 1m;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_background_update on;
+        proxy_cache_lock on;
+        add_header X-Cache-Status $upstream_cache_status;
     }
     location /api/rss/coldwire {
         proxy_pass https://www.thecoldwire.com/sports/nfl/feed/;
@@ -157,6 +169,15 @@ server {
         proxy_read_timeout 10s;
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
+        
+        # Cache settings
+        proxy_cache rss_cache;
+        proxy_cache_valid 200 5m;
+        proxy_cache_valid 404 502 503 504 1m;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_background_update on;
+        proxy_cache_lock on;
+        add_header X-Cache-Status $upstream_cache_status;
     }
     location /api/rss/nyt {
         proxy_pass https://www.nytimes.com/svc/collections/v1/publish/http://www.nytimes.com/topic/organization/national-football-league/rss.xml;
@@ -170,6 +191,15 @@ server {
         proxy_read_timeout 10s;
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
+        
+        # Cache settings
+        proxy_cache rss_cache;
+        proxy_cache_valid 200 5m;
+        proxy_cache_valid 404 502 503 504 1m;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_background_update on;
+        proxy_cache_lock on;
+        add_header X-Cache-Status $upstream_cache_status;
     }
     location /api/rss/wapo {
         proxy_pass https://feeds.washingtonpost.com/rss/rss_football-insider;
@@ -183,6 +213,15 @@ server {
         proxy_read_timeout 10s;
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
+        
+        # Cache settings
+        proxy_cache rss_cache;
+        proxy_cache_valid 200 5m;
+        proxy_cache_valid 404 502 503 504 1m;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_background_update on;
+        proxy_cache_lock on;
+        add_header X-Cache-Status $upstream_cache_status;
     }
     
     location @rss_fallback {
