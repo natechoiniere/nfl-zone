@@ -100,6 +100,33 @@ export class App implements OnInit, OnDestroy {
     this.currentIndex = 0;
     this.loadMoreNews();
   }
+
+  protected loadMoreNews(): void {
+    const all = this.allNewsItems();
+    if (this.currentIndex >= all.length) return;
+
+    const nextBatch = all.slice(this.currentIndex, this.currentIndex + this.itemsPerPage);
+    this.displayedNewsCards.update((current: RssItem[]) => [...current, ...nextBatch]);
+    this.currentIndex += this.itemsPerPage;
+  }
+
+  protected onScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+    const threshold = 200;
+    const position = target.scrollTop + target.offsetHeight;
+    const height = target.scrollHeight;
+
+    if (position > height - threshold && !this.isLoadingMore()) {
+      const all = this.allNewsItems();
+      if (this.currentIndex < all.length) {
+        this.isLoadingMore.set(true);
+        setTimeout(() => {
+          this.loadMoreNews();
+          this.isLoadingMore.set(false);
+        }, 300);
+      }
+    }
+  }
   
   // Sidebar links for NFL/Super Bowl fans
   protected readonly sidebarLinks = [
@@ -283,6 +310,7 @@ export class App implements OnInit, OnDestroy {
         this.coldWireItems.set(this.parseRss(cold, 'The Cold Wire'));
         this.nytItems.set(this.parseRss(nyt, 'NYT'));
         this.wapoItems.set(this.parseRss(wapo, 'Washington Post'));
+        this.buildAllNewsItems();
       },
       error: () => {
         this.rssError.set('Failed to load news feeds');

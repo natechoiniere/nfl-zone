@@ -46,7 +46,7 @@
     </aside>
 
     <!-- Scrollable Content Area -->
-    <div class="content-wrap">
+    <div class="content-wrap" (scroll)="onScroll($event)">
       <div class="content-container">
         <!-- Super Bowl Status Card with inline countdown when not Super Bowl Sunday -->
         <p-card [styleClass]="'status-card' + (isSuperBowlSunday() ? ' is-super-bowl' : '')">
@@ -91,9 +91,9 @@
         </p-card>
 
         <!-- News Cards Grid -->
-        @if (newsCards().length) {
+        @if (displayedNewsCards().length) {
           <section class="news-grid">
-            @for (n of newsCards(); track n.link + n.title) {
+            @for (n of displayedNewsCards(); track n.link + n.title) {
               <a class="news-card" [href]="n.link" target="_blank" rel="noopener noreferrer">
                 @if (n.imageUrl) {
                   <div class="news-image-wrap">
@@ -113,6 +113,11 @@
               </a>
             }
           </section>
+          @if (isLoadingMore()) {
+            <div class="loading-indicator">
+              <p>Loading more news...</p>
+            </div>
+          }
         }
       </div>
     </div>
