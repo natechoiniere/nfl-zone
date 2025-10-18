@@ -10,7 +10,7 @@ server {
     
     # Redirect all other traffic to HTTPS
     location / {
-        return 301 https://$server_name$request_uri;
+        return 301 https://$host$request_uri;
     }
 }
 
@@ -31,13 +31,11 @@ server {
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
-        try_files $uri =404;
     }
 
     # Serve ads.txt file directly
     location = /ads.txt {
         add_header Content-Type text/plain;
-        try_files $uri =404;
     }
 
     # Handle Angular routing
@@ -111,28 +109,26 @@ server {
     
     root /usr/share/nginx/html;
     index index.html;
+    
+    # DNS resolver for proxy
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
 
     # Cache static assets
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
-        try_files $uri =404;
     }
 
     # Serve ads.txt file directly
     location = /ads.txt {
         add_header Content-Type text/plain;
-        try_files $uri =404;
     }
 
     # Handle Angular routing
     location / {
         try_files $uri $uri/ /index.html;
     }
-
-    # DNS resolver for proxy
-    resolver 8.8.8.8 8.8.4.4 valid=300s;
-    resolver_timeout 5s;
     
     # RSS proxy endpoints with caching
     location /api/rss/espn {
@@ -273,28 +269,26 @@ server {
     server_name localhost;
     root /usr/share/nginx/html;
     index index.html;
+    
+    # DNS resolver for proxy
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
 
     # Cache static assets
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
-        try_files $uri =404;
     }
 
     # Serve ads.txt file directly
     location = /ads.txt {
         add_header Content-Type text/plain;
-        try_files $uri =404;
     }
 
     # Handle Angular routing
     location / {
         try_files $uri $uri/ /index.html;
     }
-
-    # DNS resolver for proxy
-    resolver 8.8.8.8 8.8.4.4 valid=300s;
-    resolver_timeout 5s;
     
     # RSS proxy endpoints (dev fallback)
     location /api/rss/espn {
