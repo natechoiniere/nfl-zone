@@ -6,7 +6,6 @@ import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
 
 interface RssItem {
   title: string;
@@ -297,28 +296,52 @@ export class App implements OnInit, OnDestroy {
   private loadRssFeeds() {
     this.rssLoading.set(true);
     this.rssError.set(null);
-    // Use relative proxy paths to avoid CORS both in dev and prod
-    const requests = {
-      espn: this.http.get<string>('/api/rss/espn', { responseType: 'text' as 'json' }),
-      cold: this.http.get<string>('/api/rss/coldwire', { responseType: 'text' as 'json' }),
-      nyt: this.http.get<string>('/api/rss/nyt', { responseType: 'text' as 'json' }),
-      wapo: this.http.get<string>('/api/rss/wapo', { responseType: 'text' as 'json' })
-    };
-
-    forkJoin(requests).subscribe({
-      next: ({ espn, cold, nyt, wapo }) => {
-        this.espnItems.set(this.parseRss(espn, 'ESPN'));
-        this.coldWireItems.set(this.parseRss(cold, 'The Cold Wire'));
-        this.nytItems.set(this.parseRss(nyt, 'NYT'));
-        this.wapoItems.set(this.parseRss(wapo, 'Washington Post'));
-        this.buildAllNewsItems();
+    
+    let completedCount = 0;
+    const totalFeeds = 4;
+    
+    // Load feeds in parallel, process each as it arrives
+    this.http.get<string>('/api/rss/espn', { responseType: 'text' as 'json' }).subscribe({
+      next: (data: string) => {
+        this.espnItems.set(this.parseRss(data, 'ESPN'));
+        this.onFeedLoaded(++completedCount, totalFeeds);
       },
-      error: () => {
-        this.rssError.set('Failed to load news feeds');
-        this.rssLoading.set(false);
-      },
-      complete: () => this.rssLoading.set(false)
+      error: () => this.onFeedLoaded(++completedCount, totalFeeds)
     });
+    
+    this.http.get<string>('/api/rss/coldwire', { responseType: 'text' as 'json' }).subscribe({
+      next: (data: string) => {
+        this.coldWireItems.set(this.parseRss(data, 'The Cold Wire'));
+        this.onFeedLoaded(++completedCount, totalFeeds);
+      },
+      error: () => this.onFeedLoaded(++completedCount, totalFeeds)
+    });
+    
+    this.http.get<string>('/api/rss/nyt', { responseType: 'text' as 'json' }).subscribe({
+      next: (data: string) => {
+        this.nytItems.set(this.parseRss(data, 'NYT'));
+        this.onFeedLoaded(++completedCount, totalFeeds);
+      },
+      error: () => this.onFeedLoaded(++completedCount, totalFeeds)
+    });
+    
+    this.http.get<string>('/api/rss/wapo', { responseType: 'text' as 'json' }).subscribe({
+      next: (data: string) => {
+        this.wapoItems.set(this.parseRss(data, 'Washington Post'));
+        this.onFeedLoaded(++completedCount, totalFeeds);
+      },
+      error: () => this.onFeedLoaded(++completedCount, totalFeeds)
+    });
+  }
+  
+  private onFeedLoaded(count: number, total: number) {
+    // Update news items as each feed arrives
+    this.buildAllNewsItems();
+    
+    // Mark loading complete when all feeds are done
+    if (count >= total) {
+      this.rssLoading.set(false);
+    }
   }
 
   // Minimal RSS XML parser good enough for typical feeds
