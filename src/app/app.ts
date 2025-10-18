@@ -5,11 +5,21 @@ import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
-import { DockModule } from 'primeng/dock';
+import { HttpClient } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
+
+interface RssItem {
+  title: string;
+  link: string;
+  pubDate?: string;
+  source?: string;
+  imageUrl?: string;
+  summary?: string;
+}
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, CardModule, DividerModule, TagModule, ButtonModule, DockModule],
+  imports: [RouterOutlet, CommonModule, CardModule, DividerModule, TagModule, ButtonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -19,48 +29,88 @@ export class App implements OnInit, OnDestroy {
   
   private intervalId: number | null = null;
   
-  // Dock items for NFL/Super Bowl fans
-  protected readonly dockItems = [
-    {
-      label: 'NFL',
-      icon: 'pi pi-globe',
-      command: () => window.open('https://www.nfl.com', '_blank')
-    },
-    {
-      label: 'ESPN',
-      icon: 'pi pi-chart-line',
-      command: () => window.open('https://www.espn.com/nfl/', '_blank')
-    },
-    {
-      label: 'NFL Network',
-      icon: 'pi pi-video',
-      command: () => window.open('https://www.nfl.com/network/', '_blank')
-    },
-    {
-      label: 'Super Bowl',
-      icon: 'pi pi-star',
-      command: () => window.open('https://www.nfl.com/super-bowl/', '_blank')
-    },
-    {
-      label: 'Fantasy',
-      icon: 'pi pi-users',
-      command: () => window.open('https://fantasy.nfl.com', '_blank')
-    },
-    {
-      label: 'Tickets',
-      icon: 'pi pi-ticket',
-      command: () => window.open('https://www.ticketmaster.com/superbowl', '_blank')
-    },
-    {
-      label: 'Pro Bowl',
-      icon: 'pi pi-shield',
-      command: () => window.open('https://www.nfl.com/pro-bowl/', '_blank')
-    },
-    {
-      label: 'NFL Shop',
-      icon: 'pi pi-shopping-cart',
-      command: () => window.open('https://www.nflshop.com', '_blank')
+  // RSS state
+  protected readonly espnItems = signal<RssItem[]>([]);
+  protected readonly coldWireItems = signal<RssItem[]>([]);
+  protected readonly nytItems = signal<RssItem[]>([]);
+  protected readonly wapoItems = signal<RssItem[]>([]);
+  protected readonly rssLoading = signal<boolean>(false);
+  protected readonly rssError = signal<string | null>(null);
+
+  // Infinite scroll state
+  private allNewsItems = signal<RssItem[]>([]);
+  protected readonly displayedNewsCards = signal<RssItem[]>([]);
+  protected readonly isLoadingMore = signal<boolean>(false);
+  private currentIndex = 0;
+  private readonly itemsPerPage = 6;
+
+  // Combined list for ticker (duplicated for seamless scroll)
+  protected readonly tickerBaseItems = computed(() => {
+    const merged = [
+      ...this.espnItems(),
+      ...this.coldWireItems(),
+      ...this.nytItems(),
+      ...this.wapoItems()
+    ];
+    // sort by pubDate if available
+    const withTime = merged.map(i => ({
+      ...i,
+      _ts: i.pubDate ? Date.parse(i.pubDate) || 0 : 0
+    }));
+    withTime.sort((a, b) => b._ts - a._ts);
+    return withTime.map(({ _ts, ...rest }) => rest).slice(0, 30);
+  });
+  protected readonly tickerItems = computed(() => {
+    const base = this.tickerBaseItems();
+    return base.length ? [...base, ...base] : [];
+  });
+  
+  // Build complete news list prioritizing items with images
+  private buildAllNewsItems(): void {
+    const merged = [
+      ...this.espnItems(),
+      ...this.coldWireItems(),
+      ...this.nytItems(),
+      ...this.wapoItems()
+    ];
+    if (!merged.length) {
+      this.allNewsItems.set([]);
+      return;
     }
+
+    type WithTs = RssItem & { _ts: number };
+    const withTime: WithTs[] = merged.map(i => ({
+      ...i,
+      _ts: i.pubDate ? Date.parse(i.pubDate) || 0 : 0
+    }));
+
+    // Separate items with and without images
+    const withImages = withTime.filter(i => !!i.imageUrl);
+    const withoutImages = withTime.filter(i => !i.imageUrl);
+
+    // Sort each group by time desc
+    withImages.sort((a, b) => b._ts - a._ts);
+    withoutImages.sort((a, b) => b._ts - a._ts);
+
+    // Combine: images first, then non-images
+    const all = [...withImages, ...withoutImages];
+    this.allNewsItems.set(all.map(({ _ts, ...rest }) => rest));
+    
+    // Load initial batch
+    this.currentIndex = 0;
+    this.loadMoreNews();
+  }
+  
+  // Sidebar links for NFL/Super Bowl fans
+  protected readonly sidebarLinks = [
+    { label: 'NFL', url: 'https://www.nfl.com' },
+    { label: 'ESPN', url: 'https://www.espn.com/nfl/' },
+    { label: 'NFL Network', url: 'https://www.nfl.com/network/' },
+    { label: 'Super Bowl', url: 'https://www.nfl.com/super-bowl/' },
+    { label: 'Fantasy', url: 'https://fantasy.nfl.com' },
+    { label: 'Tickets', url: 'https://www.ticketmaster.com/superbowl' },
+    { label: 'Pro Bowl', url: 'https://www.nfl.com/pro-bowl/' },
+    { label: 'NFL Shop', url: 'https://www.nflshop.com' }
   ];
   
   // Super Bowl dates (typically second Sunday in February)
@@ -196,6 +246,8 @@ export class App implements OnInit, OnDestroy {
            date1.getDate() === date2.getDate();
   }
   
+  constructor(private http: HttpClient) {}
+
   ngOnInit() {
     // Update time every second for countdown
     this.intervalId = window.setInterval(() => {
@@ -203,11 +255,185 @@ export class App implements OnInit, OnDestroy {
       this.currentDate.set(now);
       this.currentYear.set(now.getFullYear());
     }, 1000);
+
+    // Fetch RSS feeds on load
+    this.loadRssFeeds();
   }
   
   ngOnDestroy() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
+    }
+  }
+
+  private loadRssFeeds() {
+    this.rssLoading.set(true);
+    this.rssError.set(null);
+    // Use relative proxy paths to avoid CORS both in dev and prod
+    const requests = {
+      espn: this.http.get<string>('/api/rss/espn', { responseType: 'text' as 'json' }),
+      cold: this.http.get<string>('/api/rss/coldwire', { responseType: 'text' as 'json' }),
+      nyt: this.http.get<string>('/api/rss/nyt', { responseType: 'text' as 'json' }),
+      wapo: this.http.get<string>('/api/rss/wapo', { responseType: 'text' as 'json' })
+    };
+
+    forkJoin(requests).subscribe({
+      next: ({ espn, cold, nyt, wapo }) => {
+        this.espnItems.set(this.parseRss(espn, 'ESPN'));
+        this.coldWireItems.set(this.parseRss(cold, 'The Cold Wire'));
+        this.nytItems.set(this.parseRss(nyt, 'NYT'));
+        this.wapoItems.set(this.parseRss(wapo, 'Washington Post'));
+      },
+      error: () => {
+        this.rssError.set('Failed to load news feeds');
+        this.rssLoading.set(false);
+      },
+      complete: () => this.rssLoading.set(false)
+    });
+  }
+
+  // Minimal RSS XML parser good enough for typical feeds
+  private parseRss(xmlString: string, source: string): RssItem[] {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlString, 'application/xml');
+      const items = Array.from(doc.querySelectorAll('item'));
+      return items.slice(0, 8).map((item) => ({
+        title: (item.querySelector('title')?.textContent || '').trim(),
+        link: (item.querySelector('link')?.textContent || '').trim(),
+        pubDate: (item.querySelector('pubDate')?.textContent || '').trim(),
+        source,
+        imageUrl: this.extractImageUrl(item),
+        summary: this.extractSummary(item)
+      })).filter(i => i.title && i.link && this.isLikelyEnglish(`${i.title} ${i.summary || ''}`));
+    } catch {
+      return [];
+    }
+  }
+
+  private extractImageUrl(item: Element): string | undefined {
+    // enclosure tag
+    const enclosure = item.querySelector('enclosure');
+    const enclosureUrl = enclosure?.getAttribute('url');
+    const enclosureType = enclosure?.getAttribute('type') || '';
+    if (enclosureUrl && enclosureType.startsWith('image')) return enclosureUrl;
+
+    // media:content / media:thumbnail (namespace may be preserved or escaped)
+    const mediaContent = item.getElementsByTagName('media:content')[0] || item.querySelector('media\\:content');
+    const mediaThumb = item.getElementsByTagName('media:thumbnail')[0] || item.querySelector('media\\:thumbnail');
+    const mediaUrl = mediaContent?.getAttribute?.('url') || mediaThumb?.getAttribute?.('url');
+    if (mediaUrl) return mediaUrl;
+
+    // content:encoded may include HTML with images
+    const contentEncodedEl = item.getElementsByTagName('content:encoded')[0] || item.querySelector('content\\:encoded');
+    const contentHtml = contentEncodedEl?.textContent || '';
+    const fromContent = this.findImgInHtml(contentHtml);
+    if (fromContent) return fromContent;
+
+    // description often has inline image
+    const descriptionHtml = item.querySelector('description')?.textContent || '';
+    const fromDesc = this.findImgInHtml(descriptionHtml);
+    if (fromDesc) return fromDesc;
+
+    return undefined;
+  }
+
+  private findImgInHtml(html: string): string | undefined {
+    if (!html) return undefined;
+    try {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const img = doc.querySelector('img');
+      const src = img?.getAttribute('src') || img?.getAttribute('data-src');
+      return src || undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private isLikelyEnglish(text: string): boolean {
+    if (!text) return false;
+    const cleaned = text.replace(/https?:\/\/\S+/g, '');
+    const asciiMatches = cleaned.match(/[\x20-\x7E]/g) || [];
+    const ratio = asciiMatches.length / Math.max(cleaned.length, 1);
+    if (ratio < 0.85) return false;
+    const lower = cleaned.toLowerCase();
+    const spanishStop = [' el ', ' la ', ' los ', ' las ', ' de ', ' que ', ' en ', ' un ', ' una ', ' y ', ' con ', ' por ', ' para ', ' del ', ' al '];
+    let hits = 0;
+    for (const w of spanishStop) {
+      if (lower.includes(w)) hits++;
+      if (hits >= 4) return false;
+    }
+    return true;
+  }
+
+  private extractSummary(item: Element): string | undefined {
+    // Try <content:encoded> first for richer text
+    const contentEl = item.getElementsByTagName('content:encoded')[0] || item.querySelector('content\\:encoded');
+    const descriptionEl = item.querySelector('description');
+    const raw = (contentEl?.textContent || descriptionEl?.textContent || '').trim();
+    if (!raw) return undefined;
+    const text = this.htmlToPlainText(raw);
+    if (!text) return undefined;
+    return this.truncate(text, 200);
+  }
+
+  private htmlToPlainText(html: string): string {
+    try {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const text = (doc.body?.textContent || doc.documentElement?.textContent || '').replace(/\s+/g, ' ').trim();
+      return text;
+    } catch {
+      // fallback: strip tags crudely
+      return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+  }
+
+  private truncate(text: string, maxLen: number): string {
+    if (text.length <= maxLen) return text;
+    const cut = text.slice(0, maxLen);
+    const lastSpace = cut.lastIndexOf(' ');
+    return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim() + '…';
+  }
+
+  private getDailySeed(): number {
+    const today = this.currentDate();
+    return today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+  }
+
+  private seededShuffle<T>(array: T[], seed: number): T[] {
+    const result = array.slice();
+    let rand = this.mulberry32(seed);
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
+  private mulberry32(seed: number): () => number {
+    let t = seed >>> 0;
+    return () => {
+      t += 0x6D2B79F5;
+      let r = Math.imul(t ^ (t >>> 15), 1 | t);
+      r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  protected formatDateOnly(dateString: string): string {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      const options: Intl.DateTimeFormatOptions = { 
+        weekday: 'short', 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      };
+      return date.toLocaleDateString('en-US', options);
+    } catch {
+      return '';
     }
   }
 }

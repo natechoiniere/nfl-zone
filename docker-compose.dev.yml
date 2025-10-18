@@ -1,0 +1,16 @@
+services:
+  web:
+    image: node:22-alpine
+    working_dir: /workspace
+    command: sh -c "npm ci && npm run start"
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./:/workspace
+      - /workspace/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NG_TELEMETRY=0
+    restart: unless-stopped
+
+

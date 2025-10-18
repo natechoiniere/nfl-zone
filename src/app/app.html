@@ -1,131 +1,124 @@
-<!-- Header -->
+<!-- Header News Ticker -->
 <header class="header">
   <div class="container">
-    <h1 class="title">🏈 Super Bowl Sunday 🏈</h1>
-    <p class="subtitle">Is today Super Bowl Sunday?</p>
+    <div class="header-brand">
+      <img src="logo.png" alt="NFL Zone" class="logo" />
+    </div>
+    <div class="ticker-wrap">
+      <div class="ticker" [class.ticker-loading]="rssLoading()">
+        <div class="ticker-track">
+          @for (item of tickerItems(); track item.link + item.title) {
+            <a class="ticker-item" [href]="item.link" target="_blank" rel="noopener noreferrer">
+              @if (item.imageUrl) { <img class="ticker-thumb" [src]="item.imageUrl" alt="" loading="lazy" /> }
+              <span class="ticker-title">{{ item.title }}</span>
+            </a>
+          }
+        </div>
+      </div>
+      @if (rssError()) { <div class="rss-error">{{ rssError() }}</div> }
+    </div>
   </div>
 </header>
 
 <!-- Main Content -->
 <main class="main-content">
-  <div class="container">
-    
-    <!-- Super Bowl Status Card -->
-    <p-card [styleClass]="'status-card' + (isSuperBowlSunday() ? ' is-super-bowl' : '')">
-      <div class="status-content">
-        @if (isSuperBowlSunday()) {
-          <h2 class="status-title success">YES! It's Super Bowl Sunday!</h2>
-          <p class="status-message">Grab your snacks and get ready for the big game!</p>
-        } @else {
-          <h2 class="status-title">No, it's not Super Bowl Sunday</h2>
-          <p class="status-message">But the countdown is on for the next one!</p>
+  <div class="layout">
+    <!-- Fixed SaaS-style Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-brand">Hub</div>
+        <nav class="sidebar-nav">
+          <ul>
+            @for (link of sidebarLinks; track link.url + link.label) {
+              <li>
+                <a [href]="link.url" target="_blank" rel="noopener noreferrer">
+                  <i class="pi pi-external-link"></i>
+                  <span>{{ link.label }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+        <footer class="sidebar-footer">
+          <p>&copy; {{ currentYear() }} NFL Zone</p>
+        </footer>
+      </div>
+    </aside>
+
+    <!-- Scrollable Content Area -->
+    <div class="content-wrap">
+      <div class="content-container">
+        <!-- Super Bowl Status Card with inline countdown when not Super Bowl Sunday -->
+        <p-card [styleClass]="'status-card' + (isSuperBowlSunday() ? ' is-super-bowl' : '')">
+          <div class="status-content">
+            @if (isSuperBowlSunday()) {
+              <h2 class="status-title success">YES! It's Super Bowl Sunday!</h2>
+              <p class="status-message">Grab your snacks and get ready for the big game!</p>
+            } @else {
+              <h2 class="status-title">No, it's not Super Bowl Sunday</h2>
+              @if (timeUntilNext()) {
+                <div class="countdown-grid">
+                  <p-card styleClass="countdown-item">
+                    <div class="countdown-number">{{ timeUntilNext()!.days }}</div>
+                    <div class="countdown-label">Days</div>
+                  </p-card>
+                  <p-card styleClass="countdown-item">
+                    <div class="countdown-number">{{ timeUntilNext()!.hours }}</div>
+                    <div class="countdown-label">Hours</div>
+                  </p-card>
+                  <p-card styleClass="countdown-item">
+                    <div class="countdown-number">{{ timeUntilNext()!.minutes }}</div>
+                    <div class="countdown-label">Minutes</div>
+                  </p-card>
+                  <p-card styleClass="countdown-item">
+                    <div class="countdown-number">{{ timeUntilNext()!.seconds }}</div>
+                    <div class="countdown-label">Seconds</div>
+                  </p-card>
+                </div>
+              }
+            }
+          </div>
+        </p-card>
+
+        <!-- Football Fact of the Day (compact) -->
+        <p-card styleClass="fact-of-day-card">
+          <div class="fact-content compact">
+            <div class="fact-decoration left">🏆</div>
+            <p class="fact-text">
+              {{ factOfTheDay().text }}
+            </p>
+          </div>
+        </p-card>
+
+        <!-- News Cards Grid -->
+        @if (newsCards().length) {
+          <section class="news-grid">
+            @for (n of newsCards(); track n.link + n.title) {
+              <a class="news-card" [href]="n.link" target="_blank" rel="noopener noreferrer">
+                @if (n.imageUrl) {
+                  <div class="news-image-wrap">
+                    <img class="news-image" [src]="n.imageUrl" alt="" loading="lazy" />
+                  </div>
+                }
+                <div class="news-content">
+                  <h3 class="news-title">{{ n.title }}</h3>
+                  @if (n.summary) {
+                    <p class="news-summary">{{ n.summary }}</p>
+                  }
+                  <div class="news-meta">
+                    <span class="news-source">{{ n.source }}</span>
+                    @if (n.pubDate) { <span class="news-dot">•</span><span class="news-date">{{ formatDateOnly(n.pubDate) }}</span> }
+                  </div>
+                </div>
+              </a>
+            }
+          </section>
         }
       </div>
-    </p-card>
-
-    <!-- Countdown Timer -->
-    @if (!isSuperBowlSunday() && timeUntilNext()) {
-      <p-card styleClass="countdown-card">
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <h3 class="countdown-title">Time Until Next Super Bowl</h3>
-          </div>
-        </ng-template>
-        <div class="countdown-grid">
-          <p-card styleClass="countdown-item">
-            <div class="countdown-number">{{ timeUntilNext()!.days }}</div>
-            <div class="countdown-label">Days</div>
-          </p-card>
-          <p-card styleClass="countdown-item">
-            <div class="countdown-number">{{ timeUntilNext()!.hours }}</div>
-            <div class="countdown-label">Hours</div>
-          </p-card>
-          <p-card styleClass="countdown-item">
-            <div class="countdown-number">{{ timeUntilNext()!.minutes }}</div>
-            <div class="countdown-label">Minutes</div>
-          </p-card>
-          <p-card styleClass="countdown-item">
-            <div class="countdown-number">{{ timeUntilNext()!.seconds }}</div>
-            <div class="countdown-label">Seconds</div>
-          </p-card>
-        </div>
-      </p-card>
-    }
-
-    <!-- Next Super Bowl Info -->
-    @if (nextSuperBowl()) {
-      <p-card styleClass="info-card">
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <h3 class="info-title">Next Super Bowl Details</h3>
-          </div>
-        </ng-template>
-        <div class="info-content">
-          <div class="info-item">
-            <span class="info-label">Date:</span>
-            <span class="info-value">{{ nextSuperBowl()!.toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            }) }}</span>
-          </div>
-          <p-divider></p-divider>
-          <div class="info-item">
-            <span class="info-label">Time:</span>
-            <span class="info-value">6:30 PM ET</span>
-          </div>
-          <p-divider></p-divider>
-          <div class="info-item">
-            <span class="info-label">Network:</span>
-            <span class="info-value">CBS / Paramount+</span>
-          </div>
-        </div>
-      </p-card>
-    }
-
-    <!-- Football Fact of the Day -->
-    <p-card styleClass="fact-of-day-card">
-      <ng-template pTemplate="header">
-        <div class="fact-badge">
-          <i class="pi pi-lightbulb badge-icon"></i>
-          <span class="badge-text">Football Fact of the Day</span>
-        </div>
-      </ng-template>
-      <div class="fact-content">
-        <div class="fact-decoration left">🏆</div>
-        <p class="fact-text">
-          {{ factOfTheDay().text }}
-        </p>
-        <div class="fact-decoration right">🏟️</div>
-      </div>
-      <ng-template pTemplate="footer">
-        <div class="fact-footer">
-          <p class="fact-note">A new fact appears every day!</p>
-        </div>
-      </ng-template>
-    </p-card>
-
+    </div>
   </div>
 </main>
 
-<!-- Quick Links Dock -->
-<div class="dock-container">
-  <p-dock [model]="dockItems" styleClass="nfl-dock">
-    <ng-template pTemplate="item" let-item>
-      <div class="dock-item-wrapper">
-        <i [class]="item.icon"></i>
-        <span class="dock-label">{{ item.label }}</span>
-      </div>
-    </ng-template>
-  </p-dock>
-</div>
-
-<!-- Footer -->
-<footer class="footer">
-  <div class="container">
-    <p>&copy; {{ currentYear() }} Super Bowl Sunday Checker. Made with ❤️ for football fans.</p>
-  </div>
-</footer>
+<!-- Sidebar replaces bottom dock -->
 
 <router-outlet />

@@ -1,0 +1,39 @@
+{
+  "/api/rss/espn": {
+    "target": "https://www.espn.com",
+    "changeOrigin": true,
+    "secure": true,
+    "pathRewrite": {
+      "^/api/rss/espn": "/espn/rss/nfl/news?null"
+    },
+    "logLevel": "warn"
+  },
+  "/api/rss/coldwire": {
+    "target": "https://www.thecoldwire.com",
+    "changeOrigin": true,
+    "secure": true,
+    "pathRewrite": {
+      "^/api/rss/coldwire": "/sports/nfl/feed/"
+    },
+    "logLevel": "warn"
+  },
+  "/api/rss/nyt": {
+    "target": "https://www.nytimes.com",
+    "changeOrigin": true,
+    "secure": true,
+    "pathRewrite": {
+      "^/api/rss/nyt": "/svc/collections/v1/publish/http://www.nytimes.com/topic/organization/national-football-league/rss.xml"
+    },
+    "logLevel": "warn"
+  },
+  "/api/rss/wapo": {
+    "target": "https://feeds.washingtonpost.com",
+    "changeOrigin": true,
+    "secure": true,
+    "pathRewrite": {
+      "^/api/rss/wapo": "/rss/rss_football-insider"
+    },
+    "logLevel": "warn"
+  }
+}
+

@@ -127,6 +127,32 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
+    # RSS proxy endpoints
+    location /api/rss/espn {
+        proxy_pass https://www.espn.com/espn/rss/nfl/news?null;
+        proxy_set_header Host www.espn.com;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    location /api/rss/coldwire {
+        proxy_pass https://www.thecoldwire.com/sports/nfl/feed/;
+        proxy_set_header Host www.thecoldwire.com;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    location /api/rss/nyt {
+        proxy_pass https://www.nytimes.com/svc/collections/v1/publish/http://www.nytimes.com/topic/organization/national-football-league/rss.xml;
+        proxy_set_header Host www.nytimes.com;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    location /api/rss/wapo {
+        proxy_pass https://feeds.washingtonpost.com/rss/rss_football-insider;
+        proxy_set_header Host feeds.washingtonpost.com;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
     # Health check endpoint
     location /health {
         access_log off;
@@ -188,6 +214,32 @@ server {
     # Handle Angular routing
     location / {
         try_files $uri $uri/ /index.html;
+    }
+
+    # RSS proxy endpoints (dev fallback)
+    location /api/rss/espn {
+        proxy_pass https://www.espn.com/espn/rss/nfl/news?null;
+        proxy_set_header Host www.espn.com;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    location /api/rss/coldwire {
+        proxy_pass https://www.thecoldwire.com/sports/nfl/feed/;
+        proxy_set_header Host www.thecoldwire.com;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    location /api/rss/nyt {
+        proxy_pass https://www.nytimes.com/svc/collections/v1/publish/http://www.nytimes.com/topic/organization/national-football-league/rss.xml;
+        proxy_set_header Host www.nytimes.com;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    location /api/rss/wapo {
+        proxy_pass https://feeds.washingtonpost.com/rss/rss_football-insider;
+        proxy_set_header Host feeds.washingtonpost.com;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     # Health check endpoint
