@@ -21,8 +21,8 @@ RUN npx ng build --configuration=production
 # Stage 2: Serve with nginx
 FROM nginx:alpine AS production
 
-# Install curl and envsubst for health checks and config processing
-RUN apk add --no-cache curl gettext
+# Install curl, envsubst for health checks and config processing
+RUN apk add --no-cache curl gettext dcron
 
 # Copy custom nginx configuration template
 COPY default.conf.template /etc/nginx/templates/default.conf.template
@@ -36,20 +36,22 @@ COPY ads.txt /usr/share/nginx/html/ads.txt
 COPY robots.txt /usr/share/nginx/html/robots.txt
 COPY sitemap.xml /usr/share/nginx/html/sitemap.xml
 
-# Set proper permissions for nginx
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
+# Copy cache warmer and entrypoint scripts
+COPY cache-warmer.sh /usr/local/bin/cache-warmer.sh
+COPY entrypoint.sh /entrypoint.sh
+
+# Set proper permissions
+RUN chmod +x /usr/local/bin/cache-warmer.sh && \
+    chmod +x /entrypoint.sh && \
+    chown -R nginx:nginx /usr/share/nginx/html && \
+    mkdir -p /var/cache/nginx/rss && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
-    chown -R nginx:nginx /etc/nginx/conf.d
-
-# Create nginx pid directory
-RUN mkdir -p /var/run/nginx && \
-    chown -R nginx:nginx /var/run/nginx
-
-# Add signal handling script for graceful shutdown
-RUN echo '#!/bin/sh' > /usr/local/bin/nginx-stop.sh && \
-    echo 'nginx -s quit' >> /usr/local/bin/nginx-stop.sh && \
-    chmod +x /usr/local/bin/nginx-stop.sh
+    chown -R nginx:nginx /etc/nginx/conf.d && \
+    mkdir -p /var/run/nginx && \
+    chown -R nginx:nginx /var/run/nginx && \
+    touch /var/log/cache-warmer.log && \
+    chown nginx:nginx /var/log/cache-warmer.log
 
 # Expose port 80
 EXPOSE 80
@@ -58,5 +60,5 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost/health || exit 1
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Use entrypoint script to start cron and nginx
+ENTRYPOINT ["/entrypoint.sh"]
