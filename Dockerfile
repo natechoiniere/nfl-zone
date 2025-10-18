@@ -36,11 +36,13 @@ COPY ads.txt /usr/share/nginx/html/ads.txt
 COPY robots.txt /usr/share/nginx/html/robots.txt
 COPY sitemap.xml /usr/share/nginx/html/sitemap.xml
 
-# Copy cache warmer script
+# Copy cache warmer and init scripts
 COPY cache-warmer.sh /usr/local/bin/cache-warmer.sh
+COPY init-cache.sh /usr/local/bin/init-cache.sh
 
 # Set proper permissions
 RUN chmod +x /usr/local/bin/cache-warmer.sh && \
+    chmod +x /usr/local/bin/init-cache.sh && \
     chown -R nginx:nginx /usr/share/nginx/html && \
     mkdir -p /var/cache/nginx/rss && \
     chown -R nginx:nginx /var/cache/nginx && \
@@ -54,17 +56,24 @@ RUN chmod +x /usr/local/bin/cache-warmer.sh && \
 # Set up cron for hourly cache warming
 RUN echo "0 * * * * /usr/local/bin/cache-warmer.sh >> /var/log/cache-warmer.log 2>&1" > /etc/crontabs/root
 
-# Add init script to docker-entrypoint.d to warm cache and start cron
-RUN echo '#!/bin/sh' > /docker-entrypoint.d/90-cache-warmer.sh && \
-    echo 'crond -l 2 &' >> /docker-entrypoint.d/90-cache-warmer.sh && \
-    echo '(sleep 5 && /usr/local/bin/cache-warmer.sh) &' >> /docker-entrypoint.d/90-cache-warmer.sh && \
-    chmod +x /docker-entrypoint.d/90-cache-warmer.sh
+# Add init script to run BEFORE nginx config is processed (05- prefix ensures very early execution)
+RUN echo '#!/bin/sh' > /docker-entrypoint.d/05-init-cache.sh && \
+    echo 'echo "Starting cache pre-warming..."' >> /docker-entrypoint.d/05-init-cache.sh && \
+    echo '/usr/local/bin/init-cache.sh' >> /docker-entrypoint.d/05-init-cache.sh && \
+    echo 'echo "Cache pre-warming complete"' >> /docker-entrypoint.d/05-init-cache.sh && \
+    chmod +x /docker-entrypoint.d/05-init-cache.sh
+
+# Add cron starter script (runs after cache is warmed)
+RUN echo '#!/bin/sh' > /docker-entrypoint.d/15-start-cron.sh && \
+    echo 'echo "Starting cron for hourly RSS refresh..."' >> /docker-entrypoint.d/15-start-cron.sh && \
+    echo 'crond -l 2 &' >> /docker-entrypoint.d/15-start-cron.sh && \
+    chmod +x /docker-entrypoint.d/15-start-cron.sh
 
 # Expose port 80
 EXPOSE 80
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
     CMD curl -f http://localhost/health || exit 1
 
 # Use default nginx entrypoint

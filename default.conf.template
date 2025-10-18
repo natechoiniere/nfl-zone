@@ -81,8 +81,8 @@ server {
     }
 }
 
-# RSS cache configuration
-proxy_cache_path /var/cache/nginx/rss levels=1:2 keys_zone=rss_cache:10m max_size=100m inactive=60m use_temp_path=off;
+# RSS cache configuration - aggressive caching for instant loading
+proxy_cache_path /var/cache/nginx/rss levels=1:2 keys_zone=rss_cache:10m max_size=100m inactive=2h use_temp_path=off;
 
 # HTTPS server for domain
 server {
@@ -144,13 +144,14 @@ server {
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
         
-        # Cache settings
+        # Cache settings - aggressive caching for instant response
         proxy_cache rss_cache;
-        proxy_cache_valid 200 5m;
-        proxy_cache_valid 404 502 503 504 1m;
+        proxy_cache_valid 200 1h;
+        proxy_cache_valid 404 502 503 504 5m;
         proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
         proxy_cache_background_update on;
         proxy_cache_lock on;
+        proxy_cache_revalidate on;
         add_header X-Cache-Status $upstream_cache_status;
     }
     location /api/rss/coldwire {
@@ -166,13 +167,14 @@ server {
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
         
-        # Cache settings
+        # Cache settings - aggressive caching for instant response
         proxy_cache rss_cache;
-        proxy_cache_valid 200 5m;
-        proxy_cache_valid 404 502 503 504 1m;
+        proxy_cache_valid 200 1h;
+        proxy_cache_valid 404 502 503 504 5m;
         proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
         proxy_cache_background_update on;
         proxy_cache_lock on;
+        proxy_cache_revalidate on;
         add_header X-Cache-Status $upstream_cache_status;
     }
     location /api/rss/nyt {
@@ -188,13 +190,14 @@ server {
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
         
-        # Cache settings
+        # Cache settings - aggressive caching for instant response
         proxy_cache rss_cache;
-        proxy_cache_valid 200 5m;
-        proxy_cache_valid 404 502 503 504 1m;
+        proxy_cache_valid 200 1h;
+        proxy_cache_valid 404 502 503 504 5m;
         proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
         proxy_cache_background_update on;
         proxy_cache_lock on;
+        proxy_cache_revalidate on;
         add_header X-Cache-Status $upstream_cache_status;
     }
     location /api/rss/wapo {
@@ -210,13 +213,14 @@ server {
         proxy_intercept_errors on;
         error_page 502 503 504 = @rss_fallback;
         
-        # Cache settings
+        # Cache settings - aggressive caching for instant response
         proxy_cache rss_cache;
-        proxy_cache_valid 200 5m;
-        proxy_cache_valid 404 502 503 504 1m;
+        proxy_cache_valid 200 1h;
+        proxy_cache_valid 404 502 503 504 5m;
         proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
         proxy_cache_background_update on;
         proxy_cache_lock on;
+        proxy_cache_revalidate on;
         add_header X-Cache-Status $upstream_cache_status;
     }
     
