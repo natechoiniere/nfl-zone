@@ -4,4 +4,4 @@ Allow: /
 User-agent: Mediapartners-Google
 Allow: /
 
-Sitemap: https://isitsuperbowlsunday.com/sitemap.xml
+Sitemap: https://nflzone.com/sitemap.xml
