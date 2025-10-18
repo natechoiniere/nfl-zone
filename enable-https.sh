@@ -62,7 +62,7 @@ fi
 # Request or renew SSL certificates if needed
 if [ "$USE_EXISTING" = "false" ]; then
     echo "Requesting/renewing SSL certificates..."
-    certbot certonly --webroot --webroot-path=/var/www/certbot --email ${SSL_EMAIL} --agree-tos --no-eff-email -d ${BASE_DOMAIN} -d www.${BASE_DOMAIN}
+    certbot certonly --webroot --webroot-path=/var/www/certbot --email ${SSL_EMAIL} --agree-tos --no-eff-email --keep-until-expiring --non-interactive -d ${BASE_DOMAIN} -d www.${BASE_DOMAIN}
     
     if [ $? -eq 0 ]; then
         echo "SSL certificates obtained/renewed successfully"
@@ -252,7 +252,7 @@ server {
     location ~ /\\.(?!well-known) { deny all; }
     location ~ \\.(env|ini|conf|config|yml|yaml|json)\\\$ { deny all; }
     location ~ ~\\\$ { deny all; }
-    location ~ /(\\. htaccess|\\.htpasswd|\\.DS_Store|Thumbs\\.db)\\\$ { deny all; }
+    location ~ /(\\.htaccess|\\.htpasswd|\\.DS_Store|Thumbs\\.db)\\\$ { deny all; }
     location ~ \\.(ts|js\\.map|css\\.map|scss|sass|less)\\\$ { deny all; }
     location ~ /(package\\.json|package-lock\\.json|yarn\\.lock|composer\\.json)\\\$ { deny all; }
 }
