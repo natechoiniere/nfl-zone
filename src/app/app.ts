@@ -96,7 +96,8 @@ export class App implements OnInit, OnDestroy {
     const all = [...withImages, ...withoutImages];
     this.allNewsItems.set(all.map(({ _ts, ...rest }) => rest));
     
-    // Load initial batch
+    // Clear displayed items and load initial batch
+    this.displayedNewsCards.set([]);
     this.currentIndex = 0;
     this.loadMoreNews();
   }
