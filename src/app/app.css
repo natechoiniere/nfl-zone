@@ -119,7 +119,7 @@ body::before {
   display: flex;
   align-items: center;
   padding-left: 1.5rem;
-  width: 260px;
+  width: 220px;
   flex-shrink: 0;
 }
 
@@ -127,6 +127,13 @@ body::before {
   height: 40px;
   width: auto;
   display: block;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+}
+
+.header-brand .logo:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
 }
 
 .ticker-wrap {
@@ -352,8 +359,8 @@ body::before {
 .main-content { flex: 1; }
 
 /* SaaS-style layout */
-.layout { display: grid; grid-template-columns: 260px 1fr; }
-.sidebar { grid-column: 1; position: fixed; top: 0; left: 0; align-self: start; height: 100vh; width: 260px; background: #0f172a; color: white; box-shadow: 2px 0 20px rgba(0,0,0,0.08); z-index: 50; padding-top: 85px; box-sizing: border-box; }
+.layout { display: grid; grid-template-columns: 220px 1fr; }
+.sidebar { grid-column: 1; position: fixed; top: 0; left: 0; align-self: start; height: 100vh; width: 220px; background: #0f172a; color: white; box-shadow: 2px 0 20px rgba(0,0,0,0.08); z-index: 50; padding-top: 85px; box-sizing: border-box; }
 .sidebar-inner { display: flex; flex-direction: column; height: 100%; padding: 1rem; gap: 1rem; }
 .sidebar-brand { font-weight: 900; letter-spacing: 0.02em; font-size: 1.1rem; padding: 0.75rem 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
 .sidebar-nav { flex: 1; overflow-y: auto; }
@@ -361,7 +368,7 @@ body::before {
 .sidebar-nav a { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.65rem; border-radius: 10px; color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 700; transition: background 0.2s ease, color 0.2s ease; min-height: 44px; }
 .sidebar-nav a:hover { background: rgba(255,255,255,0.08); color: #fff; }
 .sidebar-nav a:active { background: rgba(255,255,255,0.15); }
-.sidebar-nav i { color: #60a5fa; }
+.sidebar-nav i { color: #60a5fa; font-size: 0.5rem; }
 .sidebar-footer { padding: 1rem 0.5rem; border-top: 1px solid rgba(255,255,255,0.08); margin-top: auto; }
 .sidebar-footer p { margin: 0; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-align: center; }
 
