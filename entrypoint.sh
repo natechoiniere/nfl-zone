@@ -12,19 +12,9 @@ echo "0 * * * * /usr/local/bin/cache-warmer.sh >> /var/log/cache-warmer.log 2>&1
 # Start cron in background
 crond -l 2 &
 
-# Start nginx as daemon first
-nginx
+# Start background cache warmer after a delay (let nginx start first)
+(sleep 5 && /usr/local/bin/cache-warmer.sh) &
 
-# Wait for nginx to be ready
-sleep 3
-
-# Initial cache warm-up
-echo "Running initial cache warm-up..."
-/usr/local/bin/cache-warmer.sh
-
-# Stop nginx daemon
-nginx -s quit
-
-# Start nginx in foreground for Docker
+# Start nginx in foreground
 exec nginx -g 'daemon off;'
 
