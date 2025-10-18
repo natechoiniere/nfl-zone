@@ -36,13 +36,11 @@ COPY ads.txt /usr/share/nginx/html/ads.txt
 COPY robots.txt /usr/share/nginx/html/robots.txt
 COPY sitemap.xml /usr/share/nginx/html/sitemap.xml
 
-# Copy cache warmer and entrypoint scripts
+# Copy cache warmer script
 COPY cache-warmer.sh /usr/local/bin/cache-warmer.sh
-COPY entrypoint.sh /entrypoint.sh
 
 # Set proper permissions
 RUN chmod +x /usr/local/bin/cache-warmer.sh && \
-    chmod +x /entrypoint.sh && \
     chown -R nginx:nginx /usr/share/nginx/html && \
     mkdir -p /var/cache/nginx/rss && \
     chown -R nginx:nginx /var/cache/nginx && \
@@ -53,6 +51,15 @@ RUN chmod +x /usr/local/bin/cache-warmer.sh && \
     touch /var/log/cache-warmer.log && \
     chown nginx:nginx /var/log/cache-warmer.log
 
+# Set up cron for hourly cache warming
+RUN echo "0 * * * * /usr/local/bin/cache-warmer.sh >> /var/log/cache-warmer.log 2>&1" > /etc/crontabs/root
+
+# Add init script to docker-entrypoint.d to warm cache and start cron
+RUN echo '#!/bin/sh' > /docker-entrypoint.d/90-cache-warmer.sh && \
+    echo 'crond -l 2 &' >> /docker-entrypoint.d/90-cache-warmer.sh && \
+    echo '(sleep 5 && /usr/local/bin/cache-warmer.sh) &' >> /docker-entrypoint.d/90-cache-warmer.sh && \
+    chmod +x /docker-entrypoint.d/90-cache-warmer.sh
+
 # Expose port 80
 EXPOSE 80
 
@@ -60,5 +67,5 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost/health || exit 1
 
-# Use entrypoint script to start cron and nginx
-ENTRYPOINT ["/entrypoint.sh"]
+# Use default nginx entrypoint
+CMD ["nginx", "-g", "daemon off;"]
