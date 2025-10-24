@@ -1,4 +1,21 @@
 services:
+  api:
+    build: ./backend
+    container_name: nfl-zone-api-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - api-data-dev:/app/data
+      - /app/node_modules
+    environment:
+      - API_PORT=3000
+      - JWT_SECRET=dev-secret-change-me
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - DB_PATH=/app/data/nflzone.db
+      - NODE_ENV=development
+    restart: unless-stopped
+
   web:
     image: node:22-alpine
     working_dir: /workspace
@@ -12,5 +29,11 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - NG_TELEMETRY=0
     restart: unless-stopped
+    depends_on:
+      - api
+
+volumes:
+  api-data-dev:
+    driver: local
 
 

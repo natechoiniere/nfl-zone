@@ -182,6 +182,17 @@ server {
         try_files $uri $uri/ /index.html;
     }
     
+    # Backend API proxy
+    location /api/auth/ {
+        proxy_pass http://${API_HOST}/api/auth/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
+    }
+    
     # RSS proxy endpoints with caching
     location /api/rss/espn {
         proxy_pass https://www.espn.com/espn/rss/nfl/news?null;
@@ -344,6 +355,15 @@ server {
     # Handle Angular routing
     location / {
         try_files $uri $uri/ /index.html;
+    }
+    
+    # Backend API proxy (dev - points to host machine)
+    location /api/auth/ {
+        proxy_pass http://host.docker.internal:3000/api/auth/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
     
     # RSS proxy endpoints (dev fallback)

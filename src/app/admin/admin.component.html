@@ -1,0 +1,57 @@
+<div class="admin-login">
+  <div class="login-container">
+    <p-card styleClass="login-card">
+      <div class="login-header">
+        <h1>Admin Login</h1>
+        <p>NFL Zone Administration</p>
+      </div>
+      
+      <form (ngSubmit)="login()" class="login-form">
+        <div class="form-field">
+          <label for="username">Username</label>
+          <input 
+            id="username"
+            type="text"
+            pInputText
+            [(ngModel)]="username"
+            name="username"
+            placeholder="Enter username"
+            [disabled]="loading()"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <p-password 
+            [(ngModel)]="password"
+            name="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            placeholder="Enter password"
+            [disabled]="loading()"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+        </div>
+
+        @if (error()) {
+          <div class="error-message">
+            {{ error() }}
+          </div>
+        }
+
+        <button 
+          pButton 
+          type="submit" 
+          label="Login"
+          [loading]="loading()"
+          [disabled]="!username() || !password()"
+          class="login-button"
+        ></button>
+      </form>
+    </p-card>
+  </div>
+</div>
+
+

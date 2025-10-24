@@ -24,8 +24,18 @@
 <main class="main-content">
   <div class="layout">
     <!-- Fixed SaaS-style Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-inner">
+    <aside class="sidebar" [class.expanded]="sidebarExpanded()">
+      <button class="sidebar-toggle" (click)="toggleSidebar()" aria-label="Toggle Sidebar">
+        <i [class]="sidebarExpanded() ? 'pi pi-chevron-left' : 'pi pi-chevron-right'"></i>
+      </button>
+      
+      <!-- Collapsed view - empty/minimal -->
+      <div class="sidebar-collapsed" *ngIf="!sidebarExpanded()">
+        <!-- Empty collapsed state - just the toggle button is visible -->
+      </div>
+      
+      <!-- Expanded view - full content -->
+      <div class="sidebar-inner" *ngIf="sidebarExpanded()">
         <div class="sidebar-brand">Hub</div>
         <nav class="sidebar-nav">
           <ul>
@@ -39,6 +49,19 @@
             }
           </ul>
         </nav>
+        
+        <!-- Super Bowl Countdown (sidebar) -->
+        <div class="sidebar-countdown">
+          <div class="countdown-title">Next Super Bowl</div>
+          @if (isSuperBowlSunday()) {
+            <div class="countdown-text">It's Super Bowl Sunday! 🏈</div>
+          } @else {
+            <div class="countdown-text">
+              {{ timeUntilNext()!.days }}d {{ timeUntilNext()!.hours }}h {{ timeUntilNext()!.minutes }}m
+            </div>
+          }
+        </div>
+        
         <footer class="sidebar-footer">
           <p>&copy; {{ currentYear() }} NFL Zone</p>
         </footer>
@@ -48,42 +71,10 @@
     <!-- Scrollable Content Area -->
     <div class="content-wrap" (scroll)="onScroll($event)">
       <div class="content-container">
-        <!-- Super Bowl Status Card with inline countdown when not Super Bowl Sunday -->
-        <p-card [styleClass]="'status-card' + (isSuperBowlSunday() ? ' is-super-bowl' : '')">
-          <div class="status-content">
-            @if (isSuperBowlSunday()) {
-              <h2 class="status-title success">YES! It's Super Bowl Sunday!</h2>
-              <p class="status-message">Grab your snacks and get ready for the big game!</p>
-            } @else {
-              <h2 class="status-title">No, it's not Super Bowl Sunday</h2>
-              @if (timeUntilNext()) {
-                <div class="countdown-grid">
-                  <p-card styleClass="countdown-item">
-                    <div class="countdown-number">{{ timeUntilNext()!.days }}</div>
-                    <div class="countdown-label">Days</div>
-                  </p-card>
-                  <p-card styleClass="countdown-item">
-                    <div class="countdown-number">{{ timeUntilNext()!.hours }}</div>
-                    <div class="countdown-label">Hours</div>
-                  </p-card>
-                  <p-card styleClass="countdown-item">
-                    <div class="countdown-number">{{ timeUntilNext()!.minutes }}</div>
-                    <div class="countdown-label">Minutes</div>
-                  </p-card>
-                  <p-card styleClass="countdown-item">
-                    <div class="countdown-number">{{ timeUntilNext()!.seconds }}</div>
-                    <div class="countdown-label">Seconds</div>
-                  </p-card>
-                </div>
-              }
-            }
-          </div>
-        </p-card>
 
-        <!-- Football Fact of the Day (compact) -->
+        <!-- Simple Fact of the Day -->
         <p-card styleClass="fact-of-day-card">
-          <div class="fact-content compact">
-            <div class="fact-decoration left">🏆</div>
+          <div class="fact-content">
             <p class="fact-text">
               {{ factOfTheDay().text }}
             </p>

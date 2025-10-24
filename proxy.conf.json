@@ -34,6 +34,12 @@
       "^/api/rss/wapo": "/rss/rss_football-insider"
     },
     "logLevel": "warn"
+  },
+  "/api/auth": {
+    "target": "http://localhost:3000",
+    "changeOrigin": false,
+    "secure": false,
+    "logLevel": "debug"
   }
 }
 

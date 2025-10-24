@@ -25,6 +25,7 @@ interface RssItem {
 export class App implements OnInit, OnDestroy {
   protected readonly title = signal('Super Bowl Sunday Checker');
   protected readonly currentYear = signal(new Date().getFullYear());
+  protected readonly sidebarExpanded = signal(false);
   
   private intervalId: number | null = null;
   
@@ -139,6 +140,10 @@ export class App implements OnInit, OnDestroy {
     { label: 'Pro Bowl', url: 'https://www.nfl.com/pro-bowl/' },
     { label: 'NFL Shop', url: 'https://www.nflshop.com' }
   ];
+  
+  protected toggleSidebar(): void {
+    this.sidebarExpanded.update((v: boolean) => !v);
+  }
   
   // Super Bowl dates (typically second Sunday in February)
   private superBowlDates = [
