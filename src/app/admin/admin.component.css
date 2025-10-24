@@ -3,23 +3,50 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: #008080;
   padding: 2rem;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-login::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.1) 2px,
+      rgba(255, 255, 255, 0.1) 4px
+    );
+  pointer-events: none;
 }
 
 .login-container {
   width: 100%;
   max-width: 420px;
+  position: relative;
+  z-index: 1;
 }
 
 ::ng-deep .login-card .p-card {
-  border-radius: 1rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  box-shadow: none;
+  border: 2px outset #c0c0c0;
+  background: #c0c0c0;
+  padding: 4px;
 }
 
 ::ng-deep .login-card .p-card-body {
   padding: 2.5rem;
+  background: #c0c0c0;
+  border: 1px inset #c0c0c0;
 }
 
 .login-header {
@@ -28,16 +55,20 @@
 }
 
 .login-header h1 {
-  font-size: 2rem;
-  font-weight: 900;
-  color: #0f172a;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #000000;
   margin: 0 0 0.5rem 0;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  text-shadow: 1px 1px 0px #ffffff;
 }
 
 .login-header p {
-  color: #64748b;
+  color: #000000;
   margin: 0;
-  font-weight: 600;
+  font-weight: normal;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 0.9rem;
 }
 
 .login-form {
@@ -53,26 +84,38 @@
 }
 
 .form-field label {
-  font-weight: 700;
-  color: #334155;
+  font-weight: bold;
+  color: #000000;
   font-size: 0.9rem;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  margin-bottom: 0.25rem;
 }
 
 ::ng-deep .form-field input,
 ::ng-deep .form-field .p-password input {
   width: 100%;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
+  padding: 0.5rem;
+  border-radius: 0;
+  border: 2px inset #c0c0c0;
   font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  background: #ffffff;
+  color: #000000;
+  transition: none;
+  box-shadow: none;
 }
 
 ::ng-deep .form-field input:focus,
 ::ng-deep .form-field .p-password input:focus {
   outline: none;
-  border-color: #2962ff;
-  box-shadow: 0 0 0 3px rgba(41, 98, 255, 0.1);
+  border: 2px inset #808080;
+  background: #ffffff;
+}
+
+::ng-deep .form-field input::placeholder,
+::ng-deep .form-field .p-password input::placeholder {
+  color: #808080;
+  opacity: 1;
 }
 
 ::ng-deep .p-password {
@@ -83,38 +126,91 @@
   width: 100%;
 }
 
+::ng-deep .p-password .p-password-toggle {
+  color: #000000 !important;
+  background: #c0c0c0 !important;
+  border: 2px outset #c0c0c0 !important;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif !important;
+  font-size: 0.8rem !important;
+  padding: 2px 6px !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  display: inline-block !important;
+  position: absolute !important;
+  right: 2px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  cursor: pointer !important;
+}
+
+::ng-deep .p-password .p-password-toggle:hover {
+  background: #d0d0d0 !important;
+  border: 2px outset #d0d0d0 !important;
+}
+
+::ng-deep .p-password .p-password-toggle:active {
+  background: #c0c0c0 !important;
+  border: 2px inset #c0c0c0 !important;
+}
+
+::ng-deep .p-password {
+  position: relative !important;
+}
+
+::ng-deep .p-password .p-inputtext {
+  padding-right: 30px !important;
+}
+
 .error-message {
-  padding: 0.75rem 1rem;
-  background: #fee;
-  border: 1px solid #fcc;
-  border-radius: 0.5rem;
-  color: #c33;
-  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff;
+  border: 2px inset #c0c0c0;
+  border-radius: 0;
+  color: #000000;
+  font-weight: normal;
   font-size: 0.9rem;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  box-shadow: none;
 }
 
 .login-button {
   width: 100%;
-  padding: 0.875rem;
+  padding: 0.5rem 1rem;
   font-size: 1rem;
-  font-weight: 700;
-  border-radius: 0.5rem;
+  font-weight: normal;
+  border-radius: 0;
   margin-top: 0.5rem;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
 ::ng-deep .login-button {
-  background: linear-gradient(135deg, #2962ff, #1e40af) !important;
-  border: none !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  background: #c0c0c0 !important;
+  border: 2px outset #c0c0c0 !important;
+  color: #000000 !important;
+  transition: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 ::ng-deep .login-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(41, 98, 255, 0.3) !important;
+  background: #d0d0d0 !important;
+  border: 2px outset #d0d0d0 !important;
 }
 
 ::ng-deep .login-button:active:not(:disabled) {
-  transform: translateY(0);
+  background: #c0c0c0 !important;
+  border: 2px inset #c0c0c0 !important;
+  transform: none !important;
+}
+
+::ng-deep .login-button:disabled {
+  background: #c0c0c0 !important;
+  border: 2px inset #c0c0c0 !important;
+  color: #808080 !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 480px) {
@@ -128,6 +224,22 @@
 
   .login-header h1 {
     font-size: 1.75rem;
+    letter-spacing: 1px;
+  }
+  
+  .login-header p {
+    font-size: 0.9rem;
+  }
+  
+  ::ng-deep .form-field input,
+  ::ng-deep .form-field .p-password input {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+  
+  .login-button {
+    font-size: 0.9rem;
+    padding: 0.75rem;
   }
 }
 

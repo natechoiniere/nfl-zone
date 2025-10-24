@@ -1,0 +1,123 @@
+<!-- Header -->
+<header class="header">
+  <div class="container">
+    <div class="header-brand">
+      <img src="logo.png" alt="NFL Zone" class="logo">
+    </div>
+    <div class="ticker-wrap">
+      <div class="ticker">
+        <div class="ticker-track">
+          @for (item of displayedNewsCards().slice(0, 5); track item.link + item.title) {
+            <a [href]="item.link" target="_blank" rel="noopener noreferrer" class="ticker-item">
+              <img [src]="item.image" [alt]="item.title" class="ticker-thumb" loading="lazy">
+              <span class="ticker-title">{{ item.title }}</span>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+  <div class="layout">
+    <!-- Fixed SaaS-style Sidebar -->
+    <aside class="sidebar" [class.expanded]="sidebarExpanded()">
+      <button class="sidebar-toggle" (click)="toggleSidebar()" aria-label="Toggle Sidebar">
+        <i [class]="sidebarExpanded() ? 'pi pi-chevron-left' : 'pi pi-chevron-right'"></i>
+      </button>
+      
+      <!-- Collapsed view - empty/minimal -->
+      <div class="sidebar-collapsed" *ngIf="!sidebarExpanded()">
+        <!-- Empty collapsed state - just the toggle button is visible -->
+      </div>
+      
+      <!-- Expanded view - full content -->
+      <div class="sidebar-inner" *ngIf="sidebarExpanded()">
+        <div class="sidebar-brand">Hub</div>
+        <nav class="sidebar-nav">
+          <ul>
+            @for (link of sidebarLinks; track link.url + link.label) {
+              <li>
+                <a [href]="link.url" target="_blank" rel="noopener noreferrer">
+                  <i class="pi pi-circle-fill"></i>
+                  <span>{{ link.label }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+        
+        <!-- Super Bowl Countdown (sidebar) -->
+        <div class="sidebar-countdown">
+          <div class="countdown-title">Next Super Bowl</div>
+          @if (isSuperBowlSunday()) {
+            <div class="countdown-text">It's Super Bowl Sunday! 🏈</div>
+          } @else {
+            <div class="countdown-text">
+              {{ timeUntilNext()!.days }}d {{ timeUntilNext()!.hours }}h {{ timeUntilNext()!.minutes }}m
+            </div>
+          }
+        </div>
+        
+        <footer class="sidebar-footer">
+          <p>&copy; {{ currentYear() }} NFL Zone</p>
+        </footer>
+      </div>
+    </aside>
+
+    <!-- Scrollable Content Area -->
+    <div class="content-wrap" (scroll)="onScroll($event)">
+      <div class="content-container">
+
+        <!-- Simple Fact of the Day -->
+        <p-card styleClass="fact-of-day-card">
+          <div class="fact-content">
+            <p class="fact-text">
+              {{ factOfTheDay().text }}
+            </p>
+          </div>
+        </p-card>
+
+        <!-- News Cards Grid -->
+        @if (displayedNewsCards().length) {
+          <section class="news-grid">
+            @for (n of displayedNewsCards(); track n.link + n.title) {
+              <article class="news-card">
+                <a [href]="n.link" target="_blank" rel="noopener noreferrer" class="news-link">
+                  <div class="news-image-wrap">
+                    <img [src]="n.image" [alt]="n.title" class="news-image" loading="lazy">
+                  </div>
+                  <div class="news-content">
+                    <h3 class="news-title">{{ n.title }}</h3>
+                    @if (n.summary) {
+                      <p class="news-summary">{{ n.summary }}</p>
+                    }
+                    <div class="news-meta">
+                      <span class="news-date">{{ formatDateOnly(n.pubDate) }}</span>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            }
+          </section>
+          
+          @if (isLoadingMore()) {
+            <div class="loading-indicator">
+              <i class="pi pi-spin pi-spinner"></i> Loading more news...
+            </div>
+          }
+        } @else if (rssLoading()) {
+          <div class="loading-indicator">
+            <i class="pi pi-spin pi-spinner"></i> Loading news feeds...
+          </div>
+        } @else {
+          <div class="loading-indicator">
+            Failed to load news feeds. Please try again later.
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</main>
