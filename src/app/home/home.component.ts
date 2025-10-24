@@ -168,13 +168,27 @@ export class HomeComponent implements OnInit, OnDestroy {
         const link = item.querySelector('link')?.textContent || '';
         const pubDate = item.querySelector('pubDate')?.textContent || '';
         const description = item.querySelector('description')?.textContent || '';
+        const contentEncoded = item.querySelector('content\\:encoded, encoded')?.textContent || '';
         
-        // Extract image from description or media
+        // Extract image from media tags, content:encoded, or description
         let image = '';
-        const mediaContent = item.querySelector('media\\:content, content');
+        
+        // Try media:content tag first
+        const mediaContent = item.querySelector('media\\:content');
         if (mediaContent) {
           image = mediaContent.getAttribute('url') || '';
-        } else {
+        }
+        
+        // Try content:encoded for img tags
+        if (!image && contentEncoded) {
+          const imgMatch = contentEncoded.match(/<img[^>]+src="([^"]+)"/);
+          if (imgMatch) {
+            image = imgMatch[1];
+          }
+        }
+        
+        // Try description for img tags
+        if (!image && description) {
           const imgMatch = description.match(/<img[^>]+src="([^"]+)"/);
           if (imgMatch) {
             image = imgMatch[1];
@@ -185,14 +199,14 @@ export class HomeComponent implements OnInit, OnDestroy {
         const summaryMatch = description.match(/<p[^>]*>(.*?)<\/p>/);
         const summary = summaryMatch ? summaryMatch[1].replace(/<[^>]*>/g, '').trim() : '';
         
-        // Only include items with images and in English
-        if (image && this.isEnglishText(title + ' ' + description)) {
+        // Only include items in English (images are optional)
+        if (this.isEnglishText(title + ' ' + description)) {
           parsedItems.push({
             title,
             link,
             pubDate,
             description,
-            image,
+            image: image || '/logo.png', // Use site logo as fallback
             summary
           });
         }
