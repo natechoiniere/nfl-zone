@@ -9,7 +9,9 @@
         <div class="ticker-track">
           @for (item of displayedNewsCards().slice(0, 5); track item.link + item.title) {
             <a [href]="item.link" target="_blank" rel="noopener noreferrer" class="ticker-item">
-              <img [src]="item.image" [alt]="item.title" class="ticker-thumb" loading="lazy">
+              @if (item.image) {
+                <img [src]="item.image" [alt]="item.title" class="ticker-thumb" loading="lazy">
+              }
               <span class="ticker-title">{{ item.title }}</span>
             </a>
           }
@@ -86,16 +88,19 @@
             @for (n of displayedNewsCards(); track n.link + n.title) {
               <article class="news-card">
                 <a [href]="n.link" target="_blank" rel="noopener noreferrer" class="news-link">
-                  <div class="news-image-wrap">
-                    <img [src]="n.image" [alt]="n.title" class="news-image" loading="lazy">
-                  </div>
+                  @if (n.image && n.image.trim() !== '') {
+                    <div class="news-image-wrap">
+                      <img [src]="n.image" [alt]="n.title" class="news-image" loading="lazy">
+                    </div>
+                  }
                   <div class="news-content">
                     <h3 class="news-title">{{ n.title }}</h3>
-                    @if (n.summary) {
+                    @if (n.summary && n.summary.trim() !== '') {
                       <p class="news-summary">{{ n.summary }}</p>
                     }
                     <div class="news-meta">
                       <span class="news-date">{{ formatDateOnly(n.pubDate) }}</span>
+                      <span class="news-source">{{ n.source | titlecase }}</span>
                     </div>
                   </div>
                 </a>

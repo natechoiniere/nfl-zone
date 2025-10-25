@@ -14,6 +14,7 @@ interface RssItem {
   description: string;
   image?: string;
   summary?: string;
+  source: string;
 }
 
 interface FactOfTheDay {
@@ -38,13 +39,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   protected readonly coldWireItems = signal<RssItem[]>([]);
   protected readonly nytItems = signal<RssItem[]>([]);
   protected readonly rssLoading = signal(false);
+  private loadedFeedsCount = 0;
+  private totalFeedsCount = 3;
   
   // News state for infinite scroll
   protected readonly allNewsItems = signal<RssItem[]>([]);
   protected readonly displayedNewsCards = signal<RssItem[]>([]);
   protected readonly isLoadingMore = signal(false);
   protected readonly currentIndex = signal(0);
-  protected readonly itemsPerPage = signal(6);
+  protected readonly itemsPerPage = signal(12);
   
   // Fact of the day
   protected readonly factOfTheDay = signal<FactOfTheDay>({ text: 'The Super Bowl is the most-watched television event in the United States each year.' });
@@ -136,31 +139,55 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   private loadRssFeeds(): void {
     this.rssLoading.set(true);
+    this.loadedFeedsCount = 0; // Reset counter
+    
+    console.log('Starting to load RSS feeds...');
     
     // ESPN NFL RSS
     this.http.get('/api/rss/espn', { responseType: 'text' }).subscribe({
-      next: (data) => this.onFeedLoaded(data, 'espn'),
-      error: () => this.rssLoading.set(false)
+      next: (data) => {
+        console.log('ESPN RSS feed loaded successfully');
+        this.onFeedLoaded(data, 'espn');
+      },
+      error: (error) => {
+        console.error('ESPN RSS feed error:', error);
+        this.onFeedError('espn');
+      }
     });
     
     // Cold Wire NFL RSS
     this.http.get('/api/rss/coldwire', { responseType: 'text' }).subscribe({
-      next: (data) => this.onFeedLoaded(data, 'coldwire'),
-      error: () => this.rssLoading.set(false)
+      next: (data) => {
+        console.log('ColdWire RSS feed loaded successfully');
+        this.onFeedLoaded(data, 'The Cold Wire');
+      },
+      error: (error) => {
+        console.error('ColdWire RSS feed error:', error);
+        this.onFeedError('The Cold Wire');
+      }
     });
     
     // NYT Sports RSS
     this.http.get('/api/rss/nyt', { responseType: 'text' }).subscribe({
-      next: (data) => this.onFeedLoaded(data, 'nyt'),
-      error: () => this.rssLoading.set(false)
+      next: (data) => {
+        console.log('NYT RSS feed loaded successfully');
+        this.onFeedLoaded(data, 'nyt');
+      },
+      error: (error) => {
+        console.error('NYT RSS feed error:', error);
+        this.onFeedError('nyt');
+      }
     });
   }
   
   private onFeedLoaded(data: string, source: string): void {
     try {
+      console.log(`${source} RSS data length:`, data.length);
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(data, 'text/xml');
       const items = xmlDoc.querySelectorAll('item');
+      console.log(`${source} found ${items.length} items in RSS feed`);
+      
       const parsedItems: RssItem[] = [];
       
       items.forEach(item => {
@@ -195,29 +222,69 @@ export class HomeComponent implements OnInit, OnDestroy {
           }
         }
         
-        // Extract summary from description
-        const summaryMatch = description.match(/<p[^>]*>(.*?)<\/p>/);
-        const summary = summaryMatch ? summaryMatch[1].replace(/<[^>]*>/g, '').trim() : '';
         
-        // Only include items in English (images are optional)
-        if (this.isEnglishText(title + ' ' + description)) {
+        // Extract summary from description - try multiple methods
+        let summary = '';
+        
+        // Try to get text from description, removing HTML tags
+        if (description) {
+          // Remove HTML tags and get clean text
+          let cleanText = description.replace(/<[^>]*>/g, '').trim();
+          
+          // Decode HTML entities
+          const textarea = document.createElement('textarea');
+          textarea.innerHTML = cleanText;
+          cleanText = textarea.value;
+          
+          // If we have clean text, take the first part (up to 200 characters)
+          if (cleanText) {
+            summary = cleanText.length > 200 ? cleanText.substring(0, 200) + '...' : cleanText;
+          }
+        }
+        
+        // Include items - skip English filtering for The Cold Wire
+        if (source === 'The Cold Wire') {
+          // Include all ColdWire items without English filtering
           parsedItems.push({
-            title,
+            title: title,
             link,
             pubDate,
             description,
-            image: image || '/logo.png', // Use site logo as fallback
-            summary
+            image: image || undefined,
+            summary,
+            source: source
           });
+        } else {
+          // Apply English filtering for other sources
+          const isEnglish = this.isEnglishText(title + ' ' + description);
+          if (isEnglish) {
+            parsedItems.push({
+              title: title,
+              link,
+              pubDate,
+              description,
+              image: image || undefined,
+              summary,
+              source: source
+            });
+          } else {
+            console.log(`Filtered out non-English item from ${source}:`, title);
+          }
         }
       });
       
+      console.log(`${source} parsed ${parsedItems.length} valid items after filtering - UPDATED CODE`);
+      if (parsedItems.length > 0) {
+        console.log(`First item from ${source}:`, parsedItems[0].title, 'Source:', parsedItems[0].source);
+      }
+      
       // Update the appropriate signal
+      console.log(`Loaded ${parsedItems.length} items from ${source}`);
       switch (source) {
         case 'espn':
           this.espnItems.set(parsedItems);
           break;
-        case 'coldwire':
+        case 'The Cold Wire':
           this.coldWireItems.set(parsedItems);
           break;
         case 'nyt':
@@ -225,14 +292,29 @@ export class HomeComponent implements OnInit, OnDestroy {
           break;
       }
       
-      // Build all news items for infinite scroll
-      this.buildAllNewsItems();
-      
     } catch (error) {
       console.error(`Error parsing ${source} RSS:`, error);
     }
     
-    this.rssLoading.set(false);
+    // Increment loaded feeds counter
+    this.loadedFeedsCount++;
+    
+    // Build all news items only when all feeds have loaded
+    if (this.loadedFeedsCount >= this.totalFeedsCount) {
+      this.buildAllNewsItems();
+      this.rssLoading.set(false);
+    }
+  }
+  
+  private onFeedError(source: string): void {
+    console.error(`Error loading ${source} RSS feed`);
+    this.loadedFeedsCount++;
+    
+    // Build all news items only when all feeds have loaded
+    if (this.loadedFeedsCount >= this.totalFeedsCount) {
+      this.buildAllNewsItems();
+      this.rssLoading.set(false);
+    }
   }
   
   private isEnglishText(text: string): boolean {
@@ -241,21 +323,60 @@ export class HomeComponent implements OnInit, OnDestroy {
     return englishPattern.test(text);
   }
   
+  
   private buildAllNewsItems(): void {
+    const espnItems = this.espnItems();
+    const coldWireItems = this.coldWireItems();
+    const nytItems = this.nytItems();
+    
+    console.log(`Building news items - ESPN: ${espnItems.length}, ColdWire: ${coldWireItems.length}, NYT: ${nytItems.length}`);
+    
+    // Combine all items from all sources
     const allItems = [
-      ...this.espnItems(),
-      ...this.coldWireItems(),
-      ...this.nytItems()
+      ...espnItems,
+      ...coldWireItems,
+      ...nytItems
     ];
     
-    // Filter for items with images and prioritize them
-    const itemsWithImages = allItems.filter(item => item.image);
-    const itemsWithoutImages = allItems.filter(item => !item.image);
+    console.log(`Total items before sorting: ${allItems.length}`);
     
-    // Combine with images first, then without images
-    const prioritizedItems = [...itemsWithImages, ...itemsWithoutImages];
+    // Sort by images first (items with images prioritized), then by date (most recent first)
+    const sortedItems = allItems.sort((a, b) => {
+      const aHasImage = a.image && a.image.trim() !== '';
+      const bHasImage = b.image && b.image.trim() !== '';
+      
+      // First, prioritize items with images
+      if (aHasImage && !bHasImage) return -1;
+      if (!aHasImage && bHasImage) return 1;
+      
+      // If both have images or both don't have images, sort by date (most recent first)
+      const dateA = new Date(a.pubDate).getTime();
+      const dateB = new Date(b.pubDate).getTime();
+      
+      return dateB - dateA;
+    });
     
-    this.allNewsItems.set(prioritizedItems);
+    // Debug: Show source distribution
+    const sourceCounts = sortedItems.reduce((acc, item) => {
+      acc[item.source] = (acc[item.source] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    console.log('Source distribution after sorting:', sourceCounts);
+    
+    // Count items with images
+    const itemsWithImages = sortedItems.filter(item => item.image && item.image.trim() !== '');
+    console.log(`Items with images: ${itemsWithImages.length}, Items without images: ${sortedItems.length - itemsWithImages.length}`);
+    
+    // Debug: Show first few items after sorting to confirm image prioritization
+    if (sortedItems.length > 0) {
+      console.log('First 5 items after sorting (images first, then recency):');
+      sortedItems.slice(0, 5).forEach((item, index) => {
+        const hasImage = item.image && item.image.trim() !== '';
+        console.log(`${index + 1}. ${item.title} (${item.source}) - Has Image: ${hasImage} - ${item.pubDate}`);
+      });
+    }
+    
+    this.allNewsItems.set(sortedItems);
     
     // Reset displayed items and load initial batch
     this.displayedNewsCards.set([]);
@@ -272,6 +393,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     const endIndex = startIndex + this.itemsPerPage();
     const newItems = this.allNewsItems().slice(startIndex, endIndex);
     
+    console.log(`Loading more news: startIndex=${startIndex}, endIndex=${endIndex}, newItems=${newItems.length}`);
+    if (newItems.length > 0) {
+      console.log(`First new item:`, newItems[0].title, 'Source:', newItems[0].source);
+    }
+    
     this.displayedNewsCards.update(current => [...current, ...newItems]);
     this.currentIndex.set(endIndex);
     
@@ -280,7 +406,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   protected onScroll(event: Event): void {
     const element = event.target as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 100) {
+    const threshold = 200; // Load more when 200px from bottom
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - threshold) {
       this.loadMoreNews();
     }
   }
@@ -292,12 +419,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   protected formatDateOnly(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
+    const formatted = date.toLocaleDateString('en-US', { 
       weekday: 'short', 
       year: 'numeric', 
       month: 'short', 
       day: 'numeric' 
     });
+    return formatted;
   }
   
   protected toggleSidebar(): void {
