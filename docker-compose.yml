@@ -50,7 +50,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
-  # Certbot for SSL certificate management
+  # Certbot for SSL certificate management (initial setup only; runs once and exits)
   certbot:
     image: certbot/certbot:v5.0.0
     container_name: certbot
@@ -66,6 +66,26 @@ services:
     entrypoint: ["/enable-https.sh"]
     depends_on:
       - superbowl-sunday
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  # Periodic SSL renewal (runs every 12h; reloads nginx only when certs renewed)
+  certbot-renew:
+    image: certbot/certbot:v5.0.0
+    container_name: certbot-renew
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./certbot-renew.sh:/certbot-renew.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - BASE_DOMAIN=${BASE_DOMAIN}
+      - CONTAINER_NAME=${CONTAINER_NAME}
+    entrypoint: ["/bin/sh", "/certbot-renew.sh"]
+    depends_on:
+      - certbot
+      - superbowl-sunday
+    restart: unless-stopped
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
 

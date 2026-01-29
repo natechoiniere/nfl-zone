@@ -22,20 +22,22 @@ KEY_FILE="${CERT_PATH}/privkey.pem"
 echo "Checking for existing SSL certificates..."
 
 # Check if certificate files exist and are valid
+FORCE_RENEWAL=false
 if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ]; then
     echo "Existing certificates found at $CERT_PATH"
+    CERTOUT=$(certbot certificates --cert-name ${BASE_DOMAIN} 2>/dev/null || true)
     
-    # Check if certificate is valid and not expired (more than 30 days remaining)
-    if certbot certificates --cert-name ${BASE_DOMAIN} 2>/dev/null | grep -q "VALID"; then
+    # Use (VALID: N days) to avoid matching EXPIRED or other variants
+    if echo "$CERTOUT" | grep -q "(VALID:"; then
         echo "Valid certificates found, checking expiration..."
         
-        # Get certificate expiration date
-        EXPIRY_DATE=$(certbot certificates --cert-name ${BASE_DOMAIN} 2>/dev/null | grep "Expiry Date" | awk '{print $3, $4, $5}')
+        # Get certificate expiration date (e.g. "2023-03-26 08:39:39+00:00")
+        EXPIRY_DATE=$(echo "$CERTOUT" | grep "Expiry Date" | awk '{print $3, $4, $5}')
         if [ -n "$EXPIRY_DATE" ]; then
             echo "Certificate expires on: $EXPIRY_DATE"
             
             # Check if certificate expires within 30 days
-            EXPIRY_TIMESTAMP=$(date -d "$EXPIRY_DATE" +%s 2>/dev/null)
+            EXPIRY_TIMESTAMP=$(date -d "$EXPIRY_DATE" +%s 2>/dev/null) || EXPIRY_TIMESTAMP=0
             CURRENT_TIMESTAMP=$(date +%s)
             DAYS_UNTIL_EXPIRY=$(( (EXPIRY_TIMESTAMP - CURRENT_TIMESTAMP) / 86400 ))
             
@@ -45,14 +47,16 @@ if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ]; then
             else
                 echo "Certificate expires in $DAYS_UNTIL_EXPIRY days, attempting renewal..."
                 USE_EXISTING=false
+                [ $DAYS_UNTIL_EXPIRY -lt 0 ] && FORCE_RENEWAL=true
             fi
         else
             echo "Could not determine certificate expiration, attempting renewal..."
             USE_EXISTING=false
         fi
     else
-        echo "Certificate validation failed, attempting renewal..."
+        echo "Certificate missing, invalid, or expired; attempting renewal..."
         USE_EXISTING=false
+        echo "$CERTOUT" | grep -qi "EXPIRED" && FORCE_RENEWAL=true
     fi
 else
     echo "No existing certificates found, requesting new ones..."
@@ -62,7 +66,13 @@ fi
 # Request or renew SSL certificates if needed
 if [ "$USE_EXISTING" = "false" ]; then
     echo "Requesting/renewing SSL certificates..."
-    certbot certonly --webroot --webroot-path=/var/www/certbot --email ${SSL_EMAIL} --agree-tos --no-eff-email --keep-until-expiring --non-interactive -d ${BASE_DOMAIN} -d www.${BASE_DOMAIN}
+    RENEW_OPTS="--webroot --webroot-path=/var/www/certbot --email ${SSL_EMAIL} --agree-tos --no-eff-email --non-interactive -d ${BASE_DOMAIN} -d www.${BASE_DOMAIN}"
+    if [ "$FORCE_RENEWAL" = "true" ]; then
+        echo "Certificate expired or invalid; forcing renewal..."
+        certbot certonly $RENEW_OPTS --force-renewal
+    else
+        certbot certonly $RENEW_OPTS --keep-until-expiring
+    fi
     
     if [ $? -eq 0 ]; then
         echo "SSL certificates obtained/renewed successfully"
